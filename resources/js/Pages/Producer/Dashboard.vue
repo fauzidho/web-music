@@ -1,29 +1,5 @@
 <template>
   <div class="min-h-screen bg-[#0b0f19] text-gray-100 selection:bg-orange-600 selection:text-white">
-    <!-- Header/Nav -->
-    <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div class="flex items-center gap-3 cursor-pointer" @click="navigateTo('Home')">
-          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
-          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
-          <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider bg-orange-600/20 border border-orange-500/30 rounded text-orange-400 uppercase ml-2">Creator Hub</span>
-        </div>
-
-        <div class="flex items-center gap-6">
-          <div class="flex items-center gap-3 text-right">
-            <div class="hidden sm:block">
-              <div class="text-sm font-bold text-white">{{ userName }}</div>
-              <div class="text-xs text-orange-400 font-semibold uppercase tracking-wider">{{ userRole }}</div>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-orange-600/30 border border-orange-500/50 flex items-center justify-center font-bold text-white">
-              {{ userName ? userName[0] : 'U' }}
-            </div>
-          </div>
-          <button @click="navigateTo('Home')" class="text-sm font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer outline-none">Return to Browse</button>
-          <button @click="logout" class="text-gray-400 hover:text-red-400 transition-colors text-sm font-semibold cursor-pointer outline-none">Sign Out</button>
-        </div>
-      </div>
-    </header>
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-10 space-y-10">
