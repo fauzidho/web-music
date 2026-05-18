@@ -12,7 +12,7 @@
           Explore Trending <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400">Independent Beats</span>
         </h1>
         <p class="text-sm md:text-base text-gray-400 leading-relaxed">
-          Welcome to WebMusic, your personal gateway to real-time audio. Click play on any track to start streaming without interruptions. Explore by genre or search for your favorite producers.
+          Welcome to BeatGround, your personal gateway to real-time audio. Click play on any track to start streaming without interruptions. Explore by genre or search for your favorite producers.
         </p>
       </div>
     </div>

@@ -4,10 +4,8 @@
     <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-900/30">
-            <span class="text-white font-extrabold text-xl tracking-tighter">W</span>
-          </div>
-          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Web<span class="text-purple-500">Music</span></span>
+          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-purple-900/30" alt="BeatGround Logo" />
+          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-purple-500">Ground</span></span>
           <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider bg-purple-600/20 border border-purple-500/30 rounded text-purple-400 uppercase ml-2">Creator Hub</span>
         </div>
 
@@ -84,7 +82,7 @@
             </svg>
           </div>
           <h4 class="text-lg font-bold text-white">No tracks released yet</h4>
-          <p class="text-sm text-gray-500 max-w-sm mx-auto">Upload your first audio track to make it public for WebMusic listeners.</p>
+          <p class="text-sm text-gray-500 max-w-sm mx-auto">Upload your first audio track to make it public for BeatGround listeners.</p>
           <a href="/producer/upload" class="inline-flex bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm shadow-lg shadow-purple-950/40">
             Release Your First Beat
           </a>

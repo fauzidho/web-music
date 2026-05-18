@@ -5,12 +5,10 @@
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
         <!-- Logo -->
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-900/30">
-            <span class="text-white font-extrabold text-xl tracking-tighter">W</span>
-          </div>
-          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Web<span class="text-purple-500">Music</span></span>
+          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-purple-900/30" alt="BeatGround Logo" />
+          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-purple-500">Ground</span></span>
         </div>
-
+        
         <!-- Navigation Links -->
         <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-400">
           <a href="/" class="hover:text-purple-400 transition-colors" :class="{ 'text-white': $page.url === '/' }">Browse</a>
@@ -59,7 +57,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-gray-950 bg-[#060810]/40 py-6 text-center text-xs text-gray-600">
-      &copy; 2026 WebMusic. Premium SoundCloud Clone powered by Inertia.js Persistent Layout.
+      &copy; 2026 BeatGround. Premium SoundCloud Clone powered by Inertia.js Persistent Layout.
     </footer>
 
     <!-- Persistent Bottom Audio Player Bar -->
