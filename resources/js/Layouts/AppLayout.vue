@@ -192,6 +192,13 @@ export default {
         const userRef = doc(db, 'users', state.currentUser.uid);
         await updateDoc(userRef, { role: nextRole });
         state.currentUser.role = nextRole;
+        
+        // Auto-redirect to appropriate dashboards based on active role
+        if (nextRole === 'producer') {
+          navigateTo('ProducerDashboard');
+        } else {
+          navigateTo('Home');
+        }
       } catch (err) {
         console.error("Failed to toggle own role:", err);
       }
