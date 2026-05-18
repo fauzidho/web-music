@@ -539,6 +539,7 @@ export default {
         newPlaylistName.value = '';
       } catch (err) {
         console.error("Failed to create playlist:", err);
+        alert("Failed to create playlist: " + err.message + "\n\nTip: Please verify that your Firebase Firestore Security Rules permit read/write operations for the 'playlists' collection.");
       }
     };
 
@@ -548,6 +549,7 @@ export default {
           await deleteDoc(doc(db, 'playlists', playlistId));
         } catch (err) {
           console.error("Failed to delete playlist:", err);
+          alert("Failed to delete playlist: " + err.message);
         }
       }
     };
@@ -578,6 +580,7 @@ export default {
         closeAddToPlaylistModal();
       } catch (err) {
         console.error("Failed to add song to playlist:", err);
+        alert("Failed to add song to playlist: " + err.message);
       }
     };
 
@@ -599,6 +602,7 @@ export default {
         await addToPlaylist(newPlaylist, song);
       } catch (err) {
         console.error("Quick create and add failed:", err);
+        alert("Failed to create and add: " + err.message);
       }
     };
 
@@ -612,6 +616,7 @@ export default {
         });
       } catch (err) {
         console.error("Failed to remove song from playlist:", err);
+        alert("Failed to remove track: " + err.message);
       }
     };
 
