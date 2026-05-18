@@ -4,15 +4,24 @@
     <div class="relative bg-gradient-to-r from-orange-900/40 via-amber-950/20 to-[#0e1322]/80 border border-orange-500/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-xl">
       <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-600/10 rounded-full blur-3xl"></div>
       
+      <!-- Admin Edit Button -->
+      <button 
+        v-if="state.currentUser?.role === 'admin'"
+        @click="openEditBannerModal"
+        class="absolute top-6 right-6 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 backdrop-blur-md transition-all cursor-pointer shadow-lg hover:scale-105 z-10"
+      >
+        <span>⚙️ Edit Banner</span>
+      </button>
+
       <div class="max-w-2xl relative space-y-4">
         <span class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold uppercase tracking-wider">
-          🎧 Live Streaming
+          {{ bannerData.tag }}
         </span>
         <h1 class="text-3xl md:text-5xl font-black text-white leading-tight tracking-tight">
-          Explore Trending <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400">Independent Beats</span>
+          {{ bannerData.title_normal }} <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400">{{ bannerData.title_highlight }}</span>
         </h1>
         <p class="text-sm md:text-base text-gray-400 leading-relaxed">
-          Welcome to BeatGround, your personal gateway to real-time audio. Click play on any track to start streaming without interruptions. Explore by genre, search for your favorite producers, or organize your favorite tracks into playlists!
+          {{ bannerData.description }}
         </p>
       </div>
     </div>
@@ -388,6 +397,87 @@
         </div>
       </div>
     </div>
+
+    <!-- MODAL OVERLAY: EDIT HOMEPAGE BANNER -->
+    <div 
+      v-if="showEditBannerModal" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm"
+      @click.self="showEditBannerModal = false"
+    >
+      <div class="w-full max-w-lg bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-3xl p-6 shadow-2xl relative space-y-6">
+        <!-- Header -->
+        <div class="flex justify-between items-start">
+          <div>
+            <h4 class="font-extrabold text-white text-lg tracking-tight">Edit Banner Settings</h4>
+            <p class="text-xs text-gray-400 mt-0.5">Customize the homepage welcome spotlight banner content</p>
+          </div>
+          <button @click="showEditBannerModal = false" class="text-gray-500 hover:text-white cursor-pointer transition-colors outline-none">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Form fields -->
+        <form @submit.prevent="saveBannerSettings" class="space-y-4 text-xs font-semibold text-gray-405">
+          <div class="space-y-1.5">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Tag / Badge Text</label>
+            <input 
+              v-model="editBannerForm.tag"
+              type="text" 
+              required
+              class="w-full h-10 px-4 rounded-xl bg-gray-950 border border-gray-800 focus:border-orange-500 outline-none text-white transition-all font-semibold"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Title (Normal Part)</label>
+              <input 
+                v-model="editBannerForm.title_normal"
+                type="text" 
+                required
+                class="w-full h-10 px-4 rounded-xl bg-gray-950 border border-gray-800 focus:border-orange-500 outline-none text-white transition-all font-semibold"
+              />
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Title (Highlighted Orange Part)</label>
+              <input 
+                v-model="editBannerForm.title_highlight"
+                type="text" 
+                required
+                class="w-full h-10 px-4 rounded-xl bg-gray-950 border border-gray-800 focus:border-orange-500 outline-none text-white transition-all font-semibold"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">Description Text</label>
+            <textarea 
+              v-model="editBannerForm.description"
+              required
+              rows="4"
+              class="w-full p-4 rounded-xl bg-gray-950 border border-gray-800 focus:border-orange-500 outline-none text-white transition-all font-semibold resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button 
+              type="button" 
+              @click="showEditBannerModal = false"
+              class="h-10 px-5 rounded-xl border border-gray-800 text-gray-400 hover:text-white font-bold text-xs hover:bg-gray-900 transition-all cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit"
+              class="h-10 px-5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-xs hover:opacity-95 transition-opacity cursor-pointer"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -395,7 +485,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { playerStore } from '../Stores/playerStore';
 import { db } from '../firebase';
-import { collection, onSnapshot, doc, updateDoc, increment, addDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, increment, addDoc, deleteDoc, query, where, setDoc } from 'firebase/firestore';
 import { state, navigateTo } from '../store';
 
 export default {
@@ -414,6 +504,21 @@ export default {
     const activeSongForPlaylist = ref(null);
     const quickPlaylistName = ref('');
 
+    // Banner settings state
+    const bannerData = ref({
+      tag: '🎧 Live Streaming',
+      title_normal: 'Explore Trending',
+      title_highlight: 'Independent Beats',
+      description: 'Welcome to BeatGround, your personal gateway to real-time audio. Click play on any track to start streaming without interruptions. Explore by genre, search for your favorite producers, or organize your favorite tracks into playlists!'
+    });
+    const showEditBannerModal = ref(false);
+    const editBannerForm = ref({
+      tag: '',
+      title_normal: '',
+      title_highlight: '',
+      description: ''
+    });
+
     // Track localized likes dynamically in UI for speed
     const likedTracks = ref([]);
 
@@ -424,6 +529,7 @@ export default {
     // Sync all songs from Firestore collection in real-time
     let unsubscribe = null;
     let unsubPlaylists = null;
+    let unsubBanner = null;
 
     onMounted(() => {
       // 1. Sync Songs
@@ -459,11 +565,24 @@ export default {
           console.error("Firestore playlists listener failed:", err);
         });
       }
+
+      // 3. Sync Homepage Banner Settings
+      unsubBanner = onSnapshot(doc(db, 'settings', 'homepage_banner'), (docSnap) => {
+        if (docSnap.exists()) {
+          bannerData.value = {
+            ...bannerData.value,
+            ...docSnap.data()
+          };
+        }
+      }, (err) => {
+        console.error("Firestore banner listener failed:", err);
+      });
     });
 
     onUnmounted(() => {
       if (unsubscribe) unsubscribe();
       if (unsubPlaylists) unsubPlaylists();
+      if (unsubBanner) unsubBanner();
     });
 
     // Dynamic Filter logic
@@ -630,6 +749,27 @@ export default {
       playerStore.play(song, playlist.songs);
     };
 
+    // --- BANNER ACTIONS ---
+    const openEditBannerModal = () => {
+      editBannerForm.value = { ...bannerData.value };
+      showEditBannerModal.value = true;
+    };
+
+    const saveBannerSettings = async () => {
+      try {
+        await setDoc(doc(db, 'settings', 'homepage_banner'), {
+          tag: editBannerForm.value.tag.trim(),
+          title_normal: editBannerForm.value.title_normal.trim(),
+          title_highlight: editBannerForm.value.title_highlight.trim(),
+          description: editBannerForm.value.description.trim()
+        });
+        showEditBannerModal.value = false;
+      } catch (err) {
+        console.error("Failed to save banner settings:", err);
+        alert("Failed to save banner settings: " + err.message + "\n\nTip: Please verify that your Firebase Firestore Security Rules permit read/write operations for the 'settings' collection.");
+      }
+    };
+
     return {
       state,
       activeViewTab,
@@ -658,9 +798,15 @@ export default {
       createAndAddToPlaylist,
       removeFromPlaylist,
       playPlaylist,
-      playPlaylistSong
+      playPlaylistSong,
+
+      // Banner returns
+      bannerData,
+      showEditBannerModal,
+      editBannerForm,
+      openEditBannerModal,
+      saveBannerSettings
     };
   }
 }
 </script>
-
