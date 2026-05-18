@@ -4,13 +4,13 @@
     <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
         <!-- Logo -->
-        <div class="flex items-center gap-3 cursor-pointer" @click="navigateTo('Home')">
+        <div class="flex items-center gap-3 cursor-pointer flex-shrink-0" @click="navigateTo('Home')">
           <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
-          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
+          <span class="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
         </div>
         
         <!-- Navigation Links -->
-        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-400">
+        <nav class="flex items-center gap-4 md:gap-8 text-xs md:text-sm font-semibold text-gray-400">
           <button @click="navigateTo('Home')" class="hover:text-orange-400 transition-colors cursor-pointer outline-none" :class="{ 'text-white': state.currentRoute === 'Home' }">Browse</button>
           
           <!-- Producer Dashboard Link -->
@@ -35,13 +35,22 @@
         </nav>
 
         <!-- User Options -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 flex-shrink-0">
           <div class="flex items-center gap-3 text-right">
             <div class="hidden sm:block">
-              <div class="text-sm font-bold text-white">{{ userName }}</div>
-              <div class="text-[10px] text-orange-400 font-semibold uppercase tracking-wider">{{ userRole }}</div>
+              <div class="text-sm font-bold text-white leading-none">{{ userName }}</div>
+              <div class="flex items-center justify-end gap-1.5 mt-1">
+                <span class="text-[9px] text-orange-400 font-bold uppercase tracking-wider bg-orange-600/10 px-1.5 py-0.5 rounded border border-orange-500/10">{{ userRole }}</span>
+                <button 
+                  @click="toggleMyRole" 
+                  class="text-[9px] text-gray-500 hover:text-orange-400 font-bold uppercase tracking-wider underline cursor-pointer outline-none transition-colors"
+                  title="Switch role instantly for testing"
+                >
+                  [ Switch ]
+                </button>
+              </div>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white shadow-md">
+            <div class="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white shadow-md select-none">
               {{ userName ? userName[0] : 'U' }}
             </div>
           </div>
@@ -134,6 +143,8 @@
 <script>
 import { computed, onMounted, ref } from 'vue';
 import { playerStore } from '../Stores/playerStore';
+import { db } from '../firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import { state, navigateTo, logoutUser } from '../store';
 
 export default {
@@ -174,6 +185,18 @@ export default {
       }
     };
 
+    const toggleMyRole = async () => {
+      if (!state.currentUser) return;
+      const nextRole = state.currentUser.role === 'producer' ? 'user' : 'producer';
+      try {
+        const userRef = doc(db, 'users', state.currentUser.uid);
+        await updateDoc(userRef, { role: nextRole });
+        state.currentUser.role = nextRole;
+      } catch (err) {
+        console.error("Failed to toggle own role:", err);
+      }
+    };
+
     const logout = async () => {
       await logoutUser();
     };
@@ -187,12 +210,35 @@ export default {
       onSeek,
       onVolumeChange,
       toggleMute,
+      toggleMyRole,
       logout,
       navigateTo
     };
   }
 }
 </script>
+
+<style scoped>
+/* Range Slider styling */
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+</style>
 
 <style scoped>
 /* Range Slider styling */
