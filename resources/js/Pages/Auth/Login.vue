@@ -70,7 +70,7 @@
       <!-- Toggle Link -->
       <div class="text-center mt-8 pt-6 border-t border-gray-800/80 text-sm text-gray-400">
         Don't have an account? 
-        <a href="/register" class="text-orange-400 font-bold hover:underline">Register</a>
+        <button type="button" @click="navigateTo('Register')" class="text-orange-400 font-bold hover:underline cursor-pointer outline-none">Register</button>
       </div>
     </div>
   </div>
@@ -78,9 +78,9 @@
 
 <script>
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
 import { auth } from '../../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { navigateTo } from '../../store';
 
 export default {
   name: 'Login',
@@ -96,19 +96,10 @@ export default {
 
       try {
         // 1. Sign in user in Firebase Auth Client-side
-        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
-        const user = userCredential.user;
+        await signInWithEmailAndPassword(auth, email.value, password.value);
 
-        // 2. Fetch the secure Firebase ID Token (JWT)
-        const idToken = await user.getIdToken();
-
-        // 3. Send token to Laravel backend to verify and initialize Laravel session
-        router.post('/login', { idToken }, {
-          onError: (errors) => {
-            error.value = errors.message || 'Login failed inside backend validation.';
-            loading.value = false;
-          }
-        });
+        // 2. State router takes care of verification, transition to Home
+        navigateTo('Home');
       } catch (err) {
         console.error(err);
         if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
@@ -125,7 +116,8 @@ export default {
       password,
       loading,
       error,
-      handleLogin
+      handleLogin,
+      navigateTo
     };
   }
 }

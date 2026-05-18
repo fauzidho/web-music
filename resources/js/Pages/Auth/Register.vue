@@ -92,7 +92,7 @@
       <!-- Toggle Link -->
       <div class="text-center mt-8 pt-6 border-t border-gray-800/80 text-sm text-gray-400">
         Already have an account? 
-        <a href="/login" class="text-orange-400 font-bold hover:underline">Sign In</a>
+        <button type="button" @click="navigateTo('Login')" class="text-orange-400 font-bold hover:underline cursor-pointer outline-none">Sign In</button>
       </div>
     </div>
   </div>
@@ -100,9 +100,10 @@
 
 <script>
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { navigateTo } from '../../store';
 
 export default {
   name: 'Register',
@@ -128,23 +129,20 @@ export default {
         const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         const user = userCredential.user;
 
-        // 2. Update display name in Firebase
+        // 2. Update display name in Firebase Auth
         await updateProfile(user, { displayName: name.value });
 
-        // 3. Fetch secure ID Token
-        const idToken = await user.getIdToken();
-
-        // 4. Send register request to Laravel backend to sync user data in Firestore and set session
-        router.post('/register', { 
-          idToken,
+        // 3. Save profile document directly to Firestore users collection
+        await setDoc(doc(db, 'users', user.uid), {
+          uid: user.uid,
           name: name.value,
-          role: role.value
-        }, {
-          onError: (errors) => {
-            error.value = errors.message || 'Registration backend syncing failed.';
-            loading.value = false;
-          }
+          email: email.value,
+          role: role.value,
+          created_at: new Date().toISOString()
         });
+
+        // 4. Redirect to Home
+        navigateTo('Home');
       } catch (err) {
         console.error(err);
         if (err.code === 'auth/email-already-in-use') {
@@ -163,7 +161,8 @@ export default {
       role,
       loading,
       error,
-      handleRegister
+      handleRegister,
+      navigateTo
     };
   }
 }

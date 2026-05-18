@@ -11,9 +11,9 @@
           <h2 class="text-3xl font-extrabold text-white tracking-tight">Upload Track</h2>
           <p class="text-sm text-gray-400 mt-1">Release a new beat or song to your fans</p>
         </div>
-        <a href="/producer/dashboard" class="text-xs border border-gray-800 hover:border-gray-600 bg-gray-900/60 text-gray-400 hover:text-white px-4 py-2 rounded-xl transition-all font-semibold">
+        <button type="button" @click="navigateTo('ProducerDashboard')" class="text-xs border border-gray-800 hover:border-gray-600 bg-gray-900/60 text-gray-400 hover:text-white px-4 py-2 rounded-xl transition-all font-semibold cursor-pointer outline-none">
           Cancel & Return
-        </a>
+        </button>
       </div>
 
       <!-- Error Alerts -->
@@ -57,101 +57,121 @@
               </select>
             </div>
 
-            <!-- Thumbnail Input -->
+            <!-- Upload Preset Configuration (Premium Direct Upload Helper) -->
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Track Cover Art (Thumbnail)</label>
+              <div class="flex items-center justify-between mb-2">
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Unsigned Upload Preset</label>
+                <span class="text-[10px] text-orange-400 font-semibold bg-orange-600/10 px-2 py-0.5 rounded">Required</span>
+              </div>
+              <input 
+                v-model="uploadPreset" 
+                type="text" 
+                required 
+                placeholder="e.g. ml_default"
+                class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
+              />
+              <span class="text-[9px] text-gray-500 block mt-1 leading-normal">Cloudinary dashboard -> Settings -> Upload -> Upload presets (Unsigned). Default is usually ml_default.</span>
+            </div>
+
+            <!-- Thumbnail Input -->
+            <div class="space-y-2">
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Cover Art (Square)</label>
+              
               <div 
+                v-if="!thumbnailPreview"
                 @dragover.prevent="thumbnailDrag = true"
                 @dragleave.prevent="thumbnailDrag = false"
                 @drop.prevent="handleThumbnailDrop"
-                class="border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer select-none transition-all flex flex-col items-center justify-center min-h-[160px] relative overflow-hidden"
-                :class="thumbnailDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'"
-                @click="$refs.thumbnailInput.click()"
+                class="relative border border-dashed rounded-2xl flex flex-col items-center justify-center p-6 transition-all"
+                :class="thumbnailDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-850 hover:border-gray-700 bg-gray-900/20'"
               >
-                <!-- Thumbnail Preview -->
-                <div v-if="thumbnailPreview" class="absolute inset-0 bg-gray-950/90 flex items-center justify-center p-3">
-                  <img :src="thumbnailPreview" class="w-full h-full object-cover rounded-lg" alt="Cover preview" />
-                  <button @click.stop="removeThumbnail" class="absolute top-2 right-2 bg-red-600/90 text-white rounded-full p-1.5 hover:bg-red-500 transition-all shadow shadow-black">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  @change="handleThumbnailChange"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <svg class="w-8 h-8 text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="text-xs font-bold text-gray-300">Drag thumbnail or click</span>
+                <span class="text-[10px] text-gray-500 mt-1">PNG, JPG up to 5MB</span>
+              </div>
+
+              <!-- Thumbnail Preview Active -->
+              <div v-else class="relative rounded-2xl overflow-hidden border border-gray-850 aspect-square group shadow-lg max-w-[200px]">
+                <img :src="thumbnailPreview" class="w-full h-full object-cover" alt="Preview cover" />
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button type="button" @click="removeThumbnail" class="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
+                    Remove Image
                   </button>
                 </div>
-
-                <div v-else class="space-y-2">
-                  <svg class="w-8 h-8 text-gray-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  <div class="text-sm font-semibold text-gray-300">Drop Cover image, or <span class="text-orange-400">browse</span></div>
-                  <div class="text-xs text-gray-500">JPG, PNG up to 5MB</div>
-                </div>
-                <input ref="thumbnailInput" type="file" accept="image/*" class="sr-only" @change="handleThumbnailChange" />
               </div>
             </div>
           </div>
 
-          <!-- Audio Input Right -->
-          <div class="flex flex-col justify-between">
-            <div class="flex-grow">
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Audio File (MP3 / WAV)</label>
+          <!-- File Uploads Right -->
+          <div class="flex flex-col justify-between space-y-6">
+            <!-- Audio Dropzone -->
+            <div class="flex-grow flex flex-col justify-end space-y-2">
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Audio File</label>
+              
               <div 
+                v-if="!audioFile"
                 @dragover.prevent="audioDrag = true"
                 @dragleave.prevent="audioDrag = false"
                 @drop.prevent="handleAudioDrop"
-                class="border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer select-none transition-all flex flex-col items-center justify-center h-[312px] relative overflow-hidden"
-                :class="audioDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'"
-                @click="$refs.audioInput.click()"
+                class="border border-dashed rounded-2xl flex flex-col items-center justify-center p-12 flex-grow transition-all relative"
+                :class="audioDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-850 hover:border-gray-700 bg-gray-900/20'"
               >
-                <!-- Selected Audio display -->
-                <div v-if="audioFile" class="space-y-4">
-                  <div class="w-16 h-16 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto text-orange-400 animate-pulse">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
-                  </div>
-                  <div>
-                    <div class="text-sm font-bold text-white max-w-[200px] truncate mx-auto">{{ audioFile.name }}</div>
-                    <div class="text-xs text-gray-500 mt-1 font-semibold">{{ formatBytes(audioFile.size) }}</div>
-                  </div>
-                  <button @click.stop="removeAudio" class="text-xs bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg font-bold border border-red-500/20 transition-all">
-                    Remove file
-                  </button>
-                </div>
+                <input 
+                  type="file" 
+                  accept="audio/*"
+                  @change="handleAudioChange"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <svg class="w-12 h-12 text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                <span class="text-sm font-bold text-gray-300">Drag beat file or browse</span>
+                <span class="text-xs text-gray-500 mt-1">High quality MP3, WAV up to 20MB</span>
+              </div>
 
-                <div v-else class="space-y-3">
-                  <div class="w-14 h-14 rounded-full bg-gray-950 border border-gray-800 flex items-center justify-center mx-auto text-gray-500">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                  </div>
-                  <div class="text-sm font-semibold text-gray-300">Drop Audio, or <span class="text-orange-400">browse</span></div>
-                  <div class="text-xs text-gray-500">MP3, WAV up to 20MB</div>
+              <!-- Audio Uploaded Active -->
+              <div v-else class="border border-gray-800 rounded-2xl bg-gray-950/30 p-6 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden shadow-inner flex-grow">
+                <div class="w-12 h-12 rounded-full bg-orange-600/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
+                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
                 </div>
-                <input ref="audioInput" type="file" accept="audio/*" class="sr-only" @change="handleAudioChange" />
+                <div class="max-w-[250px] truncate">
+                  <h4 class="font-extrabold text-white text-sm truncate">{{ audioFile.name }}</h4>
+                  <p class="text-xs text-gray-500 mt-0.5">{{ formatBytes(audioFile.size) }}</p>
+                </div>
+                <button type="button" @click="removeAudio" class="text-xs font-bold text-red-400 hover:text-red-300 transition-colors mt-2 cursor-pointer">
+                  Remove Track File
+                </button>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- Realtime Upload Progress Bar -->
-        <div v-if="loading && progress !== null" class="space-y-2 pt-4">
-          <div class="flex justify-between text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            <span>Uploading to Cloudinary...</span>
-            <span>{{ progress }}%</span>
-          </div>
-          <div class="w-full h-2.5 bg-gray-900 border border-gray-800 rounded-full overflow-hidden">
-            <div 
-              class="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 rounded-full transition-all duration-300"
-              :style="{ width: progress + '%' }"
-            ></div>
+            <!-- Upload Progress Slider Bar -->
+            <div v-if="progress !== null" class="space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                <span>Uploading...</span>
+                <span>{{ progress }}%</span>
+              </div>
+              <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-orange-600 to-amber-500 rounded-full transition-all duration-300" :style="{ width: progress + '%' }"></div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Submit Button -->
         <button 
-          type="submit" 
-          :disabled="loading || !audioFile || !thumbnailFile"
-          class="w-full h-14 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-xl shadow-orange-950/40 disabled:opacity-50 disabled:cursor-not-allowed pt-1"
+          type="submit"
+          :disabled="loading"
+          class="w-full h-12 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-orange-950/40 disabled:opacity-50 cursor-pointer outline-none"
         >
           <svg v-if="loading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span>{{ loading ? 'Uploading assets...' : 'Publish Track to BeatGround' }}</span>
+          <span>{{ loading ? 'Uploading assets to Cloudinary...' : 'Publish Track to BeatGround' }}</span>
         </button>
       </form>
     </div>
@@ -160,13 +180,19 @@
 
 <script>
 import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { db } from '../../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { state, navigateTo } from '../../store';
 
 export default {
   name: 'Upload',
   setup() {
     const title = ref('');
     const genre = ref('');
+    
+    // Customizable upload preset (defaulted to standard ml_default)
+    const uploadPreset = ref('ml_default');
+
     const thumbnailFile = ref(null);
     const thumbnailPreview = ref(null);
     const thumbnailDrag = ref(false);
@@ -253,8 +279,8 @@ export default {
       audioFile.value = null;
     };
 
-    // Form Submission
-    const handleUpload = () => {
+    // Form Submission (Direct Cloudinary Unsigned Upload + Firestore AddDoc)
+    const handleUpload = async () => {
       if (!title.value.trim() || !genre.value || !audioFile.value || !thumbnailFile.value) {
         error.value = 'Please complete all form fields and upload files.';
         return;
@@ -262,37 +288,78 @@ export default {
 
       loading.value = true;
       error.value = null;
+      progress.value = 10;
 
-      // Construct Multipart FormData
-      const formData = new FormData();
-      formData.append('title', title.value);
-      formData.append('genre', genre.value);
-      formData.append('audio', audioFile.value);
-      formData.append('thumbnail', thumbnailFile.value);
+      try {
+        // 1. Upload Thumbnail Image (resource_type: image)
+        progress.value = 25;
+        const thumbData = new FormData();
+        thumbData.append('file', thumbnailFile.value);
+        thumbData.append('upload_preset', uploadPreset.value);
 
-      router.post('/producer/upload', formData, {
-        forceFormData: true,
-        onProgress: (val) => {
-          if (val) {
-            progress.value = val.percentage;
-          }
-        },
-        onError: (errs) => {
-          console.error(errs);
-          error.value = errs.message || 'An error occurred uploading your media to Cloudinary.';
-          loading.value = false;
-          progress.value = null;
-        },
-        onFinish: () => {
-          loading.value = false;
-          progress.value = null;
+        const thumbRes = await fetch(`https://api.cloudinary.com/v1_1/dscfj5jwa/image/upload`, {
+          method: 'POST',
+          body: thumbData
+        });
+
+        if (!thumbRes.ok) {
+          const errData = await thumbRes.json().catch(() => ({}));
+          throw new Error(`Thumbnail upload failed: ${errData.error?.message || thumbRes.statusText}. Please verify unsigned uploads are active on your Cloudinary account.`);
         }
-      });
+        const thumbJson = await thumbRes.json();
+
+        // 2. Upload Audio File (resource_type: video)
+        progress.value = 65;
+        const audioData = new FormData();
+        audioData.append('file', audioFile.value);
+        audioData.append('upload_preset', uploadPreset.value);
+
+        const audioRes = await fetch(`https://api.cloudinary.com/v1_1/dscfj5jwa/video/upload`, {
+          method: 'POST',
+          body: audioData
+        });
+
+        if (!audioRes.ok) {
+          const errData = await audioRes.json().catch(() => ({}));
+          throw new Error(`Audio upload failed: ${errData.error?.message || audioRes.statusText}. Please verify that audio formats (video resource classification) are allowed.`);
+        }
+        const audioJson = await audioRes.json();
+
+        progress.value = 90;
+
+        // 3. Document insertion into Firestore songs collection
+        await addDoc(collection(db, 'songs'), {
+          title: title.value,
+          genre: genre.value,
+          audio_url: audioJson.secure_url,
+          audio_public_id: audioJson.public_id,
+          thumbnail_url: thumbJson.secure_url,
+          thumbnail_public_id: thumbJson.public_id,
+          duration: Math.round(audioJson.duration || 0),
+          plays_count: 0,
+          likes_count: 0,
+          producer_uid: state.currentUser?.uid || '',
+          producer_name: state.currentUser?.name || 'Producer',
+          created_at: new Date().toISOString()
+        });
+
+        progress.value = 100;
+        loading.value = false;
+
+        // Redirect back to Creator Dashboard
+        navigateTo('ProducerDashboard');
+      } catch (err) {
+        console.error("Direct upload flow failed:", err);
+        error.value = err.message || 'An error occurred during file upload.';
+        loading.value = false;
+        progress.value = null;
+      }
     };
 
     return {
       title,
       genre,
+      uploadPreset,
       thumbnailFile,
       thumbnailPreview,
       thumbnailDrag,
@@ -308,7 +375,8 @@ export default {
       handleAudioChange,
       handleAudioDrop,
       removeAudio,
-      handleUpload
+      handleUpload,
+      navigateTo
     };
   }
 }

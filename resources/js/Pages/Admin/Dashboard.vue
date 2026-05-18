@@ -3,15 +3,15 @@
     <!-- Header -->
     <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 cursor-pointer" @click="navigateTo('Home')">
           <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-purple-900/30" alt="BeatGround Logo" />
           <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-purple-500">Ground</span></span>
           <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider bg-red-600/20 border border-red-500/30 rounded text-red-400 uppercase ml-2">Admin Panel</span>
         </div>
 
         <div class="flex items-center gap-6">
-          <a href="/" class="text-sm font-semibold text-gray-400 hover:text-white transition-colors">Return to Browse</a>
-          <button @click="logout" class="text-xs font-semibold text-gray-400 hover:text-red-400 transition-colors">Sign Out</button>
+          <button @click="navigateTo('Home')" class="text-sm font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer outline-none">Return to Browse</button>
+          <button @click="logout" class="text-xs font-semibold text-gray-400 hover:text-red-400 transition-colors cursor-pointer outline-none">Sign Out</button>
         </div>
       </div>
     </header>
@@ -43,7 +43,7 @@
         <div class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
           <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
           <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Total Uploaded Tracks</div>
-          <div class="text-4xl font-black text-white mt-2">{{ songs.length }}</div>
+          <div class="text-4xl font-black text-white mt-2">{{ songsList.length }}</div>
           <div class="text-xs text-orange-400 font-semibold mt-2">Cloudinary & Firestore</div>
         </div>
 
@@ -58,59 +58,67 @@
       <!-- Tabbed Views -->
       <div class="space-y-6">
         <!-- Tabs Header -->
-        <div class="flex gap-4 border-b border-gray-800 pb-3">
+        <div class="flex border-b border-gray-800/80 gap-6">
           <button 
             @click="activeTab = 'users'"
-            class="h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
-            :class="activeTab === 'users' ? 'bg-orange-600 text-white' : 'text-gray-400 hover:text-white'"
+            class="pb-4 font-bold text-sm tracking-wide uppercase transition-all relative cursor-pointer outline-none"
+            :class="activeTab === 'users' ? 'text-purple-400' : 'text-gray-500 hover:text-gray-300'"
           >
-            User Accounts ({{ users.length }})
+            Users Monitoring
+            <span v-if="activeTab === 'users'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500 rounded-full"></span>
           </button>
+          
           <button 
-            @click="activeTab = 'songs'"
-            class="h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
-            :class="activeTab === 'songs' ? 'bg-orange-600 text-white' : 'text-gray-400 hover:text-white'"
+            @click="activeTab = 'tracks'"
+            class="pb-4 font-bold text-sm tracking-wide uppercase transition-all relative cursor-pointer outline-none"
+            :class="activeTab === 'tracks' ? 'text-purple-400' : 'text-gray-500 hover:text-gray-300'"
           >
-            Content Moderation ({{ songs.length }})
+            Tracks Moderation
+            <span v-if="activeTab === 'tracks'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-500 rounded-full"></span>
           </button>
         </div>
 
-        <!-- Tab 1: User Management -->
-        <div v-if="activeTab === 'users'" class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Users Table Tab -->
+        <div v-if="activeTab === 'users'" class="bg-[#0e1322]/60 border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="border-b border-gray-800/80 text-xs font-semibold text-gray-500 uppercase bg-[#0d121f]">
-                  <th class="px-6 py-4">User UID</th>
-                  <th class="px-6 py-4">Display Name</th>
+                <tr class="border-b border-gray-800 text-gray-500 text-xs font-bold uppercase tracking-wider bg-gray-950/20">
+                  <th class="px-6 py-4">User Name</th>
                   <th class="px-6 py-4">Email</th>
-                  <th class="px-6 py-4">Account Type</th>
+                  <th class="px-6 py-4">Account Role</th>
                   <th class="px-6 py-4">Joined At</th>
                   <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-800/60 text-sm font-medium">
-                <tr v-for="user in users" :key="user.uid" class="hover:bg-gray-900/30 transition-colors">
-                  <td class="px-6 py-4 text-gray-500 font-mono text-xs">{{ user.uid }}</td>
-                  <td class="px-6 py-4 font-bold text-white">{{ user.name }}</td>
+              <tbody class="divide-y divide-gray-850">
+                <tr v-for="user in usersList" :key="user.id" class="hover:bg-gray-850/10 transition-colors group">
+                  <td class="px-6 py-4 font-bold text-white flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-purple-600/10 border border-purple-500/20 flex items-center justify-center font-black text-purple-400 text-xs">
+                      {{ user.name ? user.name[0] : 'U' }}
+                    </div>
+                    <span>{{ user.name }}</span>
+                  </td>
                   <td class="px-6 py-4 text-gray-400">{{ user.email }}</td>
                   <td class="px-6 py-4">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase"
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
                       :class="user.role === 'admin' 
                         ? 'bg-red-500/10 border border-red-500/20 text-red-400' 
-                        : (user.role === 'producer' ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400' : 'bg-orange-500/10 border border-orange-500/20 text-orange-400')"
+                        : user.role === 'producer' 
+                          ? 'bg-orange-500/10 border border-orange-500/20 text-orange-400' 
+                          : 'bg-blue-500/10 border border-blue-500/20 text-blue-400'"
                     >
                       {{ user.role }}
                     </span>
                   </td>
-                  <td class="px-6 py-4 text-gray-400">{{ formatDate(user.created_at) }}</td>
+                  <td class="px-6 py-4 text-gray-500 text-xs">{{ formatDate(user.created_at) }}</td>
                   <td class="px-6 py-4 text-right">
                     <button 
                       v-if="user.role !== 'admin'"
-                      @click="toggleRole(user.uid)" 
-                      class="text-xs bg-orange-500/10 hover:bg-orange-600 border border-orange-500/20 text-orange-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all"
+                      @click="toggleRole(user)"
+                      class="text-xs bg-purple-500/10 hover:bg-purple-500 border border-purple-500/20 hover:border-purple-500 text-purple-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer"
                     >
-                      Switch Role
+                      Promote to {{ user.role === 'producer' ? 'Listener' : 'Producer' }}
                     </button>
                   </td>
                 </tr>
@@ -119,33 +127,27 @@
           </div>
         </div>
 
-        <!-- Tab 2: Song Moderation -->
-        <div v-if="activeTab === 'songs'" class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Tracks Moderation Tab -->
+        <div v-if="activeTab === 'tracks'" class="bg-[#0e1322]/60 border border-gray-800/80 rounded-2xl overflow-hidden shadow-2xl">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="border-b border-gray-800/80 text-xs font-semibold text-gray-500 uppercase bg-[#0d121f]">
-                  <th class="px-6 py-4">Track Information</th>
-                  <th class="px-6 py-4">Genre</th>
-                  <th class="px-6 py-4">Uploaded By</th>
+                <tr class="border-b border-gray-800 text-gray-500 text-xs font-bold uppercase tracking-wider bg-gray-950/20">
+                  <th class="px-6 py-4">Track Title</th>
+                  <th class="px-6 py-4">Producer</th>
                   <th class="px-6 py-4 text-center">Plays</th>
                   <th class="px-6 py-4">Status</th>
                   <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-800/60 text-sm font-medium">
-                <tr v-for="song in songs" :key="song.id" class="hover:bg-gray-900/30 transition-colors">
-                  <td class="px-6 py-4 flex items-center gap-4">
-                    <img :src="song.thumbnail_url" class="w-12 h-12 rounded-lg object-cover border border-gray-800 shadow" alt="" />
+              <tbody class="divide-y divide-gray-850">
+                <tr v-for="song in songsList" :key="song.id" class="hover:bg-gray-850/10 transition-colors">
+                  <td class="px-6 py-4 flex items-center gap-3">
+                    <img :src="song.thumbnail_url" class="w-10 h-10 rounded-lg object-cover border border-gray-800" alt="cover" />
                     <div>
-                      <div class="font-bold text-white text-base">{{ song.title }}</div>
-                      <div class="text-xs text-gray-500 mt-0.5">ID: {{ song.id }}</div>
+                      <div class="font-bold text-white">{{ song.title }}</div>
+                      <div class="text-[10px] text-gray-500 mt-0.5">ID: {{ song.id }}</div>
                     </div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <span class="px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold uppercase">
-                      {{ song.genre }}
-                    </span>
                   </td>
                   <td class="px-6 py-4 text-gray-300">{{ song.producer_name }}</td>
                   <td class="px-6 py-4 text-center font-extrabold text-white">{{ song.plays_count || 0 }}</td>
@@ -161,8 +163,8 @@
                   <td class="px-6 py-4 text-right">
                     <div class="inline-flex gap-3">
                       <button 
-                        @click="toggleModeration(song.id)"
-                        class="text-xs px-3 py-1.5 rounded-lg font-bold border transition-all"
+                        @click="toggleModeration(song)"
+                        class="text-xs px-3 py-1.5 rounded-lg font-bold border transition-all cursor-pointer"
                         :class="song.is_moderated 
                           ? 'bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500 hover:text-white' 
                           : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400 hover:bg-yellow-500 hover:text-white'"
@@ -171,7 +173,7 @@
                       </button>
                       <button 
                         @click="deleteTrack(song.id)"
-                        class="text-xs bg-red-500/10 hover:bg-red-500 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all"
+                        class="text-xs bg-red-500/10 hover:bg-red-500 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer"
                       >
                         Force Delete
                       </button>
@@ -188,49 +190,90 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { db } from '../../firebase';
+import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { state, navigateTo, logoutUser } from '../../store';
 
 export default {
   name: 'AdminDashboard',
-  props: {
-    users: {
-      type: Array,
-      required: true
-    },
-    songs: {
-      type: Array,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
     const activeTab = ref('users');
+    const usersList = ref([]);
+    const songsList = ref([]);
+
+    // Live subscriptions to all users and all songs
+    let unsubUsers = null;
+    let unsubSongs = null;
+
+    onMounted(() => {
+      unsubUsers = onSnapshot(collection(db, 'users'), (snapshot) => {
+        usersList.value = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+      }, (err) => {
+        console.error("Users live subscription failed:", err);
+      });
+
+      unsubSongs = onSnapshot(collection(db, 'songs'), (snapshot) => {
+        songsList.value = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+      }, (err) => {
+        console.error("Songs live subscription failed:", err);
+      });
+    });
+
+    onUnmounted(() => {
+      if (unsubUsers) unsubUsers();
+      if (unsubSongs) unsubSongs();
+    });
 
     const totalListeners = computed(() => {
-      return props.users.filter(u => u.role === 'user').length;
+      return usersList.value.filter(u => u.role === 'user').length;
     });
 
     const totalProducers = computed(() => {
-      return props.users.filter(u => u.role === 'producer').length;
+      return usersList.value.filter(u => u.role === 'producer').length;
     });
 
     const totalPlays = computed(() => {
-      return props.songs.reduce((acc, song) => acc + (song.plays_count || 0), 0);
+      return songsList.value.reduce((acc, song) => acc + (song.plays_count || 0), 0);
     });
 
-    const toggleRole = (uid) => {
-      if (confirm('Are you sure you want to change this user role?')) {
-        router.post(`/admin/user/${uid}/role`);
+    const toggleRole = async (user) => {
+      const nextRole = user.role === 'producer' ? 'user' : 'producer';
+      if (confirm(`Are you sure you want to change user "${user.name}" role to ${nextRole}?`)) {
+        try {
+          await updateDoc(doc(db, 'users', user.id), {
+            role: nextRole
+          });
+        } catch (err) {
+          console.error("Failed to update user role:", err);
+        }
       }
     };
 
-    const toggleModeration = (songId) => {
-      router.post(`/admin/track/${songId}/moderation`);
+    const toggleModeration = async (song) => {
+      const nextMod = !song.is_moderated;
+      try {
+        await updateDoc(doc(db, 'songs', song.id), {
+          is_moderated: nextMod
+        });
+      } catch (err) {
+        console.error("Failed to toggle moderation status:", err);
+      }
     };
 
-    const deleteTrack = (songId) => {
+    const deleteTrack = async (songId) => {
       if (confirm('Are you absolutely sure you want to FORCE moderate and delete this track from the ecosystem? This is permanent.')) {
-        router.delete(`/admin/track/${songId}`);
+        try {
+          await deleteDoc(doc(db, 'songs', songId));
+        } catch (err) {
+          console.error("Force delete failed:", err);
+        }
       }
     };
 
@@ -244,12 +287,14 @@ export default {
       }
     };
 
-    const logout = () => {
-      router.post('/logout');
+    const logout = async () => {
+      await logoutUser();
     };
 
     return {
       activeTab,
+      usersList,
+      songsList,
       totalListeners,
       totalProducers,
       totalPlays,
@@ -257,7 +302,8 @@ export default {
       toggleModeration,
       deleteTrack,
       formatDate,
-      logout
+      logout,
+      navigateTo
     };
   }
 }

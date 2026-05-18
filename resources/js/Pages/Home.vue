@@ -142,35 +142,47 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import AppLayout from '../Layouts/AppLayout.vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { playerStore } from '../Stores/playerStore';
+import { db } from '../firebase';
+import { collection, onSnapshot, doc, updateDoc, increment } from 'firebase/firestore';
 
 export default {
   name: 'Home',
-  // Set the Persistent Layout
-  layout: AppLayout,
-  props: {
-    songs: {
-      type: Array,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
     const searchQuery = ref('');
     const selectedGenre = ref('All');
+    const songsList = ref([]);
     
     // Track localized likes dynamically in UI for speed
     const likedTracks = ref([]);
-    const likesCache = ref({});
 
     const genresList = ['All', 'Lo-Fi', 'Synthwave', 'Hip-Hop', 'EDM', 'Acoustic'];
 
     const player = computed(() => playerStore);
 
+    // Sync all songs from Firestore collection in real-time
+    let unsubscribe = null;
+    onMounted(() => {
+      unsubscribe = onSnapshot(collection(db, 'songs'), (snapshot) => {
+        songsList.value = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+      }, (err) => {
+        console.error("Firestore songs listener failed:", err);
+      });
+    });
+
+    onUnmounted(() => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    });
+
     // Dynamic Filter logic
     const filteredSongs = computed(() => {
-      let list = props.songs;
+      let list = songsList.value;
 
       // Genre filter
       if (selectedGenre.value !== 'All') {
@@ -206,21 +218,12 @@ export default {
       if (isLiked(song.id)) return; // Simple debounce
 
       try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        const response = await fetch(`/track/${song.id}/like`, {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': csrfToken,
-            'Content-Type': 'application/json'
-          }
+        const songRef = doc(db, 'songs', song.id);
+        await updateDoc(songRef, {
+          likes_count: increment(1)
         });
-
-        if (response.ok) {
-          const resData = await response.json();
-          // Update visual likes count directly in memory
-          song.likes_count = resData.likes_count;
-          likedTracks.value.push(song.id);
-        }
+        
+        likedTracks.value.push(song.id);
       } catch (err) {
         console.error("Like action failed:", err);
       }
