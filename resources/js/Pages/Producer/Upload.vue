@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#0b0f19] text-gray-100 flex items-center justify-center p-6 relative overflow-hidden">
     <!-- Decorative Blurry Background Elements -->
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl"></div>
     <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
 
     <div class="w-full max-w-2xl bg-gradient-to-b from-[#111827]/80 to-[#0f172a]/95 border border-gray-800 rounded-3xl p-8 shadow-2xl relative backdrop-blur-xl space-y-8">
@@ -36,7 +36,7 @@
                 type="text" 
                 required 
                 placeholder="e.g. Neon Shadows"
-                class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
+                class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
               />
             </div>
 
@@ -45,7 +45,7 @@
               <select 
                 v-model="genre"
                 required
-                class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all cursor-pointer"
+                class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all cursor-pointer"
               >
                 <option value="" disabled>Select a Genre</option>
                 <option value="Lo-Fi">🎧 Lo-Fi Beat</option>
@@ -65,7 +65,7 @@
                 @dragleave.prevent="thumbnailDrag = false"
                 @drop.prevent="handleThumbnailDrop"
                 class="border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer select-none transition-all flex flex-col items-center justify-center min-h-[160px] relative overflow-hidden"
-                :class="thumbnailDrag ? 'border-purple-500 bg-purple-500/5' : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'"
+                :class="thumbnailDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'"
                 @click="$refs.thumbnailInput.click()"
               >
                 <!-- Thumbnail Preview -->
@@ -80,7 +80,7 @@
                   <svg class="w-8 h-8 text-gray-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                   </svg>
-                  <div class="text-sm font-semibold text-gray-300">Drop Cover image, or <span class="text-purple-400">browse</span></div>
+                  <div class="text-sm font-semibold text-gray-300">Drop Cover image, or <span class="text-orange-400">browse</span></div>
                   <div class="text-xs text-gray-500">JPG, PNG up to 5MB</div>
                 </div>
                 <input ref="thumbnailInput" type="file" accept="image/*" class="sr-only" @change="handleThumbnailChange" />
@@ -97,12 +97,12 @@
                 @dragleave.prevent="audioDrag = false"
                 @drop.prevent="handleAudioDrop"
                 class="border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer select-none transition-all flex flex-col items-center justify-center h-[312px] relative overflow-hidden"
-                :class="audioDrag ? 'border-purple-500 bg-purple-500/5' : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'"
+                :class="audioDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-800 bg-gray-900/40 hover:border-gray-700'"
                 @click="$refs.audioInput.click()"
               >
                 <!-- Selected Audio display -->
                 <div v-if="audioFile" class="space-y-4">
-                  <div class="w-16 h-16 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto text-purple-400 animate-pulse">
+                  <div class="w-16 h-16 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mx-auto text-orange-400 animate-pulse">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
                   </div>
                   <div>
@@ -118,7 +118,7 @@
                   <div class="w-14 h-14 rounded-full bg-gray-950 border border-gray-800 flex items-center justify-center mx-auto text-gray-500">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                   </div>
-                  <div class="text-sm font-semibold text-gray-300">Drop Audio, or <span class="text-purple-400">browse</span></div>
+                  <div class="text-sm font-semibold text-gray-300">Drop Audio, or <span class="text-orange-400">browse</span></div>
                   <div class="text-xs text-gray-500">MP3, WAV up to 20MB</div>
                 </div>
                 <input ref="audioInput" type="file" accept="audio/*" class="sr-only" @change="handleAudioChange" />
@@ -135,7 +135,7 @@
           </div>
           <div class="w-full h-2.5 bg-gray-900 border border-gray-800 rounded-full overflow-hidden">
             <div 
-              class="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-full transition-all duration-300"
+              class="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 rounded-full transition-all duration-300"
               :style="{ width: progress + '%' }"
             ></div>
           </div>
@@ -145,7 +145,7 @@
         <button 
           type="submit" 
           :disabled="loading || !audioFile || !thumbnailFile"
-          class="w-full h-14 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-xl shadow-purple-950/40 disabled:opacity-50 disabled:cursor-not-allowed pt-1"
+          class="w-full h-14 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-xl shadow-orange-950/40 disabled:opacity-50 disabled:cursor-not-allowed pt-1"
         >
           <svg v-if="loading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

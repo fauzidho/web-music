@@ -1,15 +1,15 @@
 <template>
   <div class="space-y-10">
     <!-- Welcome Spotlight Banner -->
-    <div class="relative bg-gradient-to-r from-purple-900/40 via-pink-900/20 to-[#0e1322]/80 border border-purple-500/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-xl">
-      <div class="absolute -top-24 -right-24 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl"></div>
+    <div class="relative bg-gradient-to-r from-orange-900/40 via-amber-950/20 to-[#0e1322]/80 border border-orange-500/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-xl">
+      <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-600/10 rounded-full blur-3xl"></div>
       
       <div class="max-w-2xl relative space-y-4">
-        <span class="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold uppercase tracking-wider">
+        <span class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold uppercase tracking-wider">
           🎧 Live Streaming
         </span>
         <h1 class="text-3xl md:text-5xl font-black text-white leading-tight tracking-tight">
-          Explore Trending <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400">Independent Beats</span>
+          Explore Trending <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400">Independent Beats</span>
         </h1>
         <p class="text-sm md:text-base text-gray-400 leading-relaxed">
           Welcome to BeatGround, your personal gateway to real-time audio. Click play on any track to start streaming without interruptions. Explore by genre or search for your favorite producers.
@@ -27,7 +27,7 @@
           @click="selectedGenre = g"
           class="h-10 px-5 rounded-full text-xs font-bold uppercase tracking-wider border select-none transition-all flex items-center gap-1.5"
           :class="selectedGenre === g 
-            ? 'bg-purple-600 border-purple-500 text-white font-extrabold shadow-lg shadow-purple-950/40' 
+            ? 'bg-orange-600 border-orange-500 text-white font-extrabold shadow-lg shadow-orange-950/40' 
             : 'bg-gray-900/60 border-gray-800 text-gray-400 hover:border-gray-700 hover:text-white'"
         >
           <span>{{ g }}</span>
@@ -43,7 +43,7 @@
           v-model="searchQuery"
           type="text" 
           placeholder="Search track title or producer..." 
-          class="w-full h-11 pl-12 pr-4 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none text-xs text-white placeholder-gray-500 transition-all font-semibold"
+          class="w-full h-11 pl-12 pr-4 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-xs text-white placeholder-gray-500 transition-all font-semibold"
         />
       </div>
     </div>
@@ -71,8 +71,8 @@
         <div 
           v-for="song in filteredSongs" 
           :key="song.id"
-          class="group bg-gradient-to-b from-[#111827]/40 to-[#0f172a]/80 border rounded-2xl p-4 shadow-lg hover:shadow-xl hover:border-purple-500/30 transition-all duration-300 relative overflow-hidden"
-          :class="{ 'border-purple-600 ring-1 ring-purple-600/30 bg-purple-950/5': isPlayingSong(song.id) , 'border-gray-800': !isPlayingSong(song.id) }"
+          class="group bg-gradient-to-b from-[#111827]/40 to-[#0f172a]/80 border rounded-2xl p-4 shadow-lg hover:shadow-xl hover:border-orange-500/30 transition-all duration-300 relative overflow-hidden"
+          :class="{ 'border-orange-600 ring-1 ring-orange-600/30 bg-orange-950/5': isPlayingSong(song.id) , 'border-gray-800': !isPlayingSong(song.id) }"
         >
           <!-- Thumbnail Container -->
           <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-950 border border-gray-800/80 mb-4 shadow-inner">
@@ -82,7 +82,7 @@
             <div class="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <button 
                 @click="playSong(song)" 
-                class="w-16 h-16 rounded-full bg-purple-600 hover:bg-purple-500 text-white flex items-center justify-center shadow-lg shadow-purple-950/50 hover:scale-105 transition-transform"
+                class="w-16 h-16 rounded-full bg-orange-600 hover:bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-950/50 hover:scale-105 transition-transform"
               >
                 <!-- Play/Pause Icon -->
                 <svg v-if="!isPlayingSong(song.id) || !player.isPlaying" class="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -91,7 +91,7 @@
             </div>
 
             <!-- Realtime active indicator pulse -->
-            <div v-if="isPlayingSong(song.id) && player.isPlaying" class="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-purple-600/90 text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1.5 shadow backdrop-blur-md">
+            <div v-if="isPlayingSong(song.id) && player.isPlaying" class="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-orange-600/90 text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1.5 shadow backdrop-blur-md">
               <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
               <span>Playing</span>
             </div>
@@ -100,10 +100,10 @@
           <!-- Title & Artist -->
           <div class="space-y-1">
             <div class="flex items-start justify-between gap-2">
-              <h4 class="font-extrabold text-white text-base truncate flex-grow tracking-tight group-hover:text-purple-400 transition-colors" :title="song.title">
+              <h4 class="font-extrabold text-white text-base truncate flex-grow tracking-tight group-hover:text-orange-400 transition-colors" :title="song.title">
                 {{ song.title }}
               </h4>
-              <span class="text-[10px] bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold px-2 py-0.5 rounded uppercase flex-shrink-0">
+              <span class="text-[10px] bg-orange-500/10 border border-orange-500/20 text-orange-400 font-bold px-2 py-0.5 rounded uppercase flex-shrink-0">
                 {{ song.genre }}
               </span>
             </div>

@@ -1,21 +1,21 @@
 <template>
-  <div class="min-h-screen bg-[#0b0f19] text-gray-100 selection:bg-purple-600 selection:text-white">
+  <div class="min-h-screen bg-[#0b0f19] text-gray-100 selection:bg-orange-600 selection:text-white">
     <!-- Header/Nav -->
     <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-purple-900/30" alt="BeatGround Logo" />
-          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-purple-500">Ground</span></span>
-          <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider bg-purple-600/20 border border-purple-500/30 rounded text-purple-400 uppercase ml-2">Creator Hub</span>
+          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
+          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
+          <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider bg-orange-600/20 border border-orange-500/30 rounded text-orange-400 uppercase ml-2">Creator Hub</span>
         </div>
 
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-3 text-right">
             <div class="hidden sm:block">
               <div class="text-sm font-bold text-white">{{ $page.props.auth.user.name }}</div>
-              <div class="text-xs text-purple-400 font-semibold uppercase tracking-wider">{{ $page.props.auth.user.role }}</div>
+              <div class="text-xs text-orange-400 font-semibold uppercase tracking-wider">{{ $page.props.auth.user.role }}</div>
             </div>
-            <div class="w-10 h-10 rounded-full bg-purple-600/30 border border-purple-500/50 flex items-center justify-center font-bold text-white">
+            <div class="w-10 h-10 rounded-full bg-orange-600/30 border border-orange-500/50 flex items-center justify-center font-bold text-white">
               {{ $page.props.auth.user.name[0] }}
             </div>
           </div>
@@ -28,33 +28,31 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-10 space-y-10">
       <!-- Welcome Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-800 pb-8">
         <div>
-          <h1 class="text-4xl font-extrabold text-white tracking-tight">Creator Dashboard</h1>
-          <p class="text-sm text-gray-400 mt-1">Manage your tracks, monitor stats, and upload new beats</p>
+          <h2 class="text-3xl font-extrabold text-white tracking-tight">Creator Dashboard</h2>
+          <p class="text-sm text-gray-400 mt-1">Manage and track the performance of your released music</p>
         </div>
-        <a href="/producer/upload" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold px-6 h-12 rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-950/40">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-          </svg>
-          <span>Upload New Track</span>
+        <a href="/producer/upload" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold px-6 h-12 rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-orange-950/40">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <span>Release New Track</span>
         </a>
       </div>
 
-      <!-- Quick Metrics -->
+      <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl"></div>
+          <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
           <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Total Plays</div>
           <div class="text-4xl font-black text-white mt-2">{{ totalPlays }}</div>
-          <div class="text-xs text-purple-400 font-semibold mt-2">Realtime from Firestore</div>
+          <div class="text-xs text-orange-400 font-semibold mt-2">Realtime from Firestore</div>
         </div>
 
         <div class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-2xl"></div>
+          <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
           <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Uploaded Tracks</div>
           <div class="text-4xl font-black text-white mt-2">{{ songs.length }}</div>
-          <div class="text-xs text-pink-400 font-semibold mt-2">Fully Hosted on Cloudinary</div>
+          <div class="text-xs text-orange-400 font-semibold mt-2">Fully Hosted on Cloudinary</div>
         </div>
 
         <div class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
@@ -83,7 +81,7 @@
           </div>
           <h4 class="text-lg font-bold text-white">No tracks released yet</h4>
           <p class="text-sm text-gray-500 max-w-sm mx-auto">Upload your first audio track to make it public for BeatGround listeners.</p>
-          <a href="/producer/upload" class="inline-flex bg-purple-600 hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm shadow-lg shadow-purple-950/40">
+          <a href="/producer/upload" class="inline-flex bg-orange-600 hover:bg-orange-500 text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm shadow-lg shadow-orange-950/40">
             Release Your First Beat
           </a>
         </div>
@@ -113,7 +111,7 @@
                   </div>
                 </td>
                 <td class="px-6 py-4">
-                  <span class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold uppercase">
+                  <span class="px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold uppercase">
                     {{ song.genre }}
                   </span>
                 </td>

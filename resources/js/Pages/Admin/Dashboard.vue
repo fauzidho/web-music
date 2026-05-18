@@ -27,10 +27,10 @@
       <!-- Quick Metrics -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl"></div>
+          <div class="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl"></div>
           <div class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Total Listeners</div>
           <div class="text-4xl font-black text-white mt-2">{{ totalListeners }}</div>
-          <div class="text-xs text-purple-400 font-semibold mt-2">Active Profiles</div>
+          <div class="text-xs text-orange-400 font-semibold mt-2">Active Profiles</div>
         </div>
 
         <div class="bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
@@ -62,14 +62,14 @@
           <button 
             @click="activeTab = 'users'"
             class="h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
-            :class="activeTab === 'users' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'"
+            :class="activeTab === 'users' ? 'bg-orange-600 text-white' : 'text-gray-400 hover:text-white'"
           >
             User Accounts ({{ users.length }})
           </button>
           <button 
             @click="activeTab = 'songs'"
             class="h-10 px-6 rounded-xl text-xs font-bold uppercase tracking-wider transition-all"
-            :class="activeTab === 'songs' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'"
+            :class="activeTab === 'songs' ? 'bg-orange-600 text-white' : 'text-gray-400 hover:text-white'"
           >
             Content Moderation ({{ songs.length }})
           </button>
@@ -98,7 +98,7 @@
                     <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase"
                       :class="user.role === 'admin' 
                         ? 'bg-red-500/10 border border-red-500/20 text-red-400' 
-                        : (user.role === 'producer' ? 'bg-pink-500/10 border border-pink-500/20 text-pink-400' : 'bg-purple-500/10 border border-purple-500/20 text-purple-400')"
+                        : (user.role === 'producer' ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400' : 'bg-orange-500/10 border border-orange-500/20 text-orange-400')"
                     >
                       {{ user.role }}
                     </span>
@@ -108,7 +108,7 @@
                     <button 
                       v-if="user.role !== 'admin'"
                       @click="toggleRole(user.uid)" 
-                      class="text-xs bg-purple-500/10 hover:bg-purple-600 border border-purple-500/20 text-purple-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all"
+                      class="text-xs bg-orange-500/10 hover:bg-orange-600 border border-orange-500/20 text-orange-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all"
                     >
                       Switch Role
                     </button>
@@ -143,7 +143,7 @@
                     </div>
                   </td>
                   <td class="px-6 py-4">
-                    <span class="px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold uppercase">
+                    <span class="px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-bold uppercase">
                       {{ song.genre }}
                     </span>
                   </td>

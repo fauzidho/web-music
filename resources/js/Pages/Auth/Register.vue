@@ -1,14 +1,14 @@
 <template>
   <div class="min-h-screen bg-[#0b0f19] text-gray-100 flex items-center justify-center p-6 relative overflow-hidden">
     <!-- Decorative Blurry Background Elements -->
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl"></div>
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl"></div>
     <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"></div>
 
     <div class="w-full max-w-md bg-gradient-to-b from-[#111827]/80 to-[#0f172a]/95 border border-gray-800 rounded-3xl p-8 shadow-2xl relative backdrop-blur-xl">
       <!-- Title & Branding -->
       <div class="text-center mb-8">
-        <div class="inline-flex w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 items-center justify-center shadow-lg shadow-purple-900/30 mb-4">
-          <span class="text-white font-extrabold text-2xl tracking-tighter">W</span>
+        <div class="inline-flex mb-4">
+          <img src="/BeatGround.png" class="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
         </div>
         <h2 class="text-3xl font-extrabold text-white tracking-tight">Create Account</h2>
         <p class="text-sm text-gray-400 mt-2">Join independent music streaming community</p>
@@ -31,7 +31,7 @@
             type="text" 
             required 
             placeholder="John Doe"
-            class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
+            class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
           />
         </div>
 
@@ -42,7 +42,7 @@
             type="email" 
             required 
             placeholder="name@example.com"
-            class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
+            class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
           />
         </div>
 
@@ -53,7 +53,7 @@
             type="password" 
             required 
             placeholder="•••••••• (Min 6 characters)"
-            class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
+            class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
           />
         </div>
 
@@ -62,13 +62,13 @@
           <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Account Type</label>
           <div class="grid grid-cols-2 gap-4">
             <label class="flex items-center justify-center gap-2 h-12 rounded-xl border cursor-pointer select-none transition-all"
-              :class="role === 'user' ? 'border-purple-500 bg-purple-500/10 text-white font-bold' : 'border-gray-800 bg-gray-900/60 text-gray-400 hover:border-gray-700'"
+              :class="role === 'user' ? 'border-orange-500 bg-orange-500/10 text-white font-bold' : 'border-gray-800 bg-gray-900/60 text-gray-400 hover:border-gray-700'"
             >
               <input type="radio" value="user" v-model="role" class="sr-only" />
               <span>🎧 Listener</span>
             </label>
             <label class="flex items-center justify-center gap-2 h-12 rounded-xl border cursor-pointer select-none transition-all"
-              :class="role === 'producer' ? 'border-purple-500 bg-purple-500/10 text-white font-bold' : 'border-gray-800 bg-gray-900/60 text-gray-400 hover:border-gray-700'"
+              :class="role === 'producer' ? 'border-orange-500 bg-orange-500/10 text-white font-bold' : 'border-gray-800 bg-gray-900/60 text-gray-400 hover:border-gray-700'"
             >
               <input type="radio" value="producer" v-model="role" class="sr-only" />
               <span>🎹 Producer</span>
@@ -79,7 +79,7 @@
         <button 
           type="submit" 
           :disabled="loading"
-          class="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-purple-950/40 disabled:opacity-50 mt-4"
+          class="w-full h-12 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-orange-950/40 disabled:opacity-50 mt-4"
         >
           <svg v-if="loading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -92,7 +92,7 @@
       <!-- Toggle Link -->
       <div class="text-center mt-8 pt-6 border-t border-gray-800/80 text-sm text-gray-400">
         Already have an account? 
-        <a href="/login" class="text-purple-400 font-bold hover:underline">Sign In</a>
+        <a href="/login" class="text-orange-400 font-bold hover:underline">Sign In</a>
       </div>
     </div>
   </div>

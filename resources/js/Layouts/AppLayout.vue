@@ -1,23 +1,23 @@
 <template>
-  <div class="min-h-screen bg-[#0b0f19] text-gray-100 flex flex-col justify-between selection:bg-purple-600 selection:text-white pb-28">
+  <div class="min-h-screen bg-[#0b0f19] text-gray-100 flex flex-col justify-between selection:bg-orange-600 selection:text-white pb-28">
     <!-- Header -->
     <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
         <!-- Logo -->
         <div class="flex items-center gap-3">
-          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-purple-900/30" alt="BeatGround Logo" />
-          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-purple-500">Ground</span></span>
+          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
+          <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
         </div>
         
         <!-- Navigation Links -->
         <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-400">
-          <a href="/" class="hover:text-purple-400 transition-colors" :class="{ 'text-white': $page.url === '/' }">Browse</a>
+          <a href="/" class="hover:text-orange-400 transition-colors" :class="{ 'text-white': $page.url === '/' }">Browse</a>
           
           <!-- Producer Dashboard Link -->
           <a 
             v-if="userRole === 'producer' || userRole === 'admin'"
             href="/producer/dashboard" 
-            class="hover:text-purple-400 transition-colors" 
+            class="hover:text-orange-400 transition-colors" 
             :class="{ 'text-white': $page.url.startsWith('/producer') }"
           >
             Producer Panel
@@ -27,7 +27,7 @@
           <a 
             v-if="userRole === 'admin'"
             href="/admin/dashboard" 
-            class="hover:text-purple-400 transition-colors" 
+            class="hover:text-orange-400 transition-colors" 
             :class="{ 'text-white': $page.url.startsWith('/admin') }"
           >
             Admin Panel
@@ -39,9 +39,9 @@
           <div class="flex items-center gap-3 text-right">
             <div class="hidden sm:block">
               <div class="text-sm font-bold text-white">{{ userName }}</div>
-              <div class="text-[10px] text-purple-400 font-semibold uppercase tracking-wider">{{ userRole }}</div>
+              <div class="text-[10px] text-orange-400 font-semibold uppercase tracking-wider">{{ userRole }}</div>
             </div>
-            <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center font-bold text-white shadow-md">
+            <div class="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white shadow-md">
               {{ userName ? userName[0] : 'U' }}
             </div>
           </div>
@@ -70,7 +70,7 @@
         <img :src="player.currentTrack.thumbnail_url" class="w-14 h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0" alt="Cover" />
         <div class="truncate">
           <h4 class="font-bold text-white text-sm truncate">{{ player.currentTrack.title }}</h4>
-          <p class="text-xs text-purple-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
+          <p class="text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
         </div>
       </div>
 
@@ -102,7 +102,7 @@
               :max="player.duration || 100" 
               :value="player.currentTime"
               @input="onSeek"
-              class="w-full h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-purple-500 group-hover:h-1.5 transition-all"
+              class="w-full h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-orange-500 group-hover:h-1.5 transition-all"
             />
           </div>
           <span>{{ formatTime(player.duration) }}</span>
@@ -124,7 +124,7 @@
           step="0.05"
           :value="player.volume"
           @input="onVolumeChange"
-          class="w-20 h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-purple-500"
+          class="w-20 h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-orange-500"
         />
       </div>
     </div>
