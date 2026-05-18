@@ -16,13 +16,23 @@ class FirebaseService
 
     public function __construct()
     {
-        $credentialsPath = storage_path('app/firebase/music-web-e717c-firebase-adminsdk-fbsvc-9ca60a1147.json');
-        
-        if (!file_exists($credentialsPath)) {
-            throw new Exception("Firebase service account credentials file not found at: " . $credentialsPath);
+        $credentialsJson = env('FIREBASE_CREDENTIALS_JSON');
+
+        if ($credentialsJson) {
+            $credentials = json_decode($credentialsJson, true);
+            if (!$credentials) {
+                throw new \Exception("Invalid JSON format in FIREBASE_CREDENTIALS_JSON environment variable.");
+            }
+        } else {
+            $credentialsPath = storage_path('app/firebase/music-web-e717c-firebase-adminsdk-fbsvc-9ca60a1147.json');
+            
+            if (!file_exists($credentialsPath)) {
+                throw new \Exception("Firebase service account credentials file not found at: " . $credentialsPath);
+            }
+
+            $credentials = json_decode(file_get_contents($credentialsPath), true);
         }
 
-        $credentials = json_decode(file_get_contents($credentialsPath), true);
         $this->projectId = $credentials['project_id'];
         $this->clientEmail = $credentials['client_email'];
         $this->privateKey = $credentials['private_key'];
