@@ -67,7 +67,7 @@
             <tbody class="divide-y divide-gray-850">
               <tr v-for="song in songsList" :key="song.id" class="hover:bg-gray-850/20 transition-colors group">
                 <td class="px-6 py-4 flex items-center gap-3">
-                  <img :src="song.thumbnail_url" class="w-10 h-10 rounded-lg object-cover border border-gray-800 shadow" alt="cover" />
+                  <img :src="song.thumbnail_url" class="w-10 h-10 rounded-lg object-cover border border-gray-800 shadow animate-fade-in" alt="cover" />
                   <div class="truncate max-w-[200px]">
                     <div class="font-bold text-white truncate">{{ song.title }}</div>
                     <div class="text-xs text-gray-500 mt-0.5">ID: {{ song.id }}</div>
@@ -92,6 +92,9 @@
                 </td>
                 <td class="px-6 py-4 text-right">
                   <div class="inline-flex gap-3">
+                    <button @click="openLyricsModal(song)" class="text-xs bg-orange-500/10 hover:bg-orange-500 border border-orange-500/20 hover:border-orange-500 text-orange-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer">
+                      ✍️ Edit Lyrics
+                    </button>
                     <button @click="deleteTrack(song.id)" class="text-xs bg-red-500/10 hover:bg-red-500 border border-red-500/20 hover:border-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer">
                       Delete
                     </button>
@@ -103,19 +106,61 @@
         </div>
       </div>
     </main>
+
+    <!-- Lyrics Editor Modal Overlay -->
+    <div v-if="showLyricsModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-6 transition-all duration-300">
+      <div class="w-full max-w-xl bg-gradient-to-b from-[#111827] to-[#0f172a] border border-gray-800 rounded-3xl p-8 shadow-2xl space-y-6 relative animate-fade-in">
+        <button @click="closeLyricsModal" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl transition-colors cursor-pointer outline-none">&times;</button>
+        
+        <div>
+          <span class="text-xs font-bold text-orange-500 uppercase tracking-wider">Songwriter Desk</span>
+          <h3 class="text-2xl font-black text-white mt-1">Edit Track Lyrics</h3>
+          <p class="text-xs text-gray-400 mt-1">Update the lyrics for <span class="text-white font-bold">"{{ activeSongForLyrics?.title }}"</span></p>
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Lyrics Text</label>
+          <textarea 
+            v-model="lyricsText" 
+            rows="10"
+            placeholder="Type or paste the song lyrics here..."
+            class="w-full p-4 rounded-2xl bg-gray-950/60 border border-gray-850 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-sm text-gray-200 placeholder-gray-600 transition-all resize-none leading-relaxed font-semibold"
+          ></textarea>
+        </div>
+
+        <div class="flex gap-4">
+          <button @click="closeLyricsModal" class="flex-1 h-12 rounded-xl border border-gray-800 hover:border-gray-600 text-gray-400 hover:text-white text-sm font-bold transition-colors cursor-pointer">
+            Cancel
+          </button>
+          <button @click="saveLyrics" :disabled="savingLyrics" class="flex-grow h-12 rounded-xl bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-orange-950/40 disabled:opacity-50 cursor-pointer">
+            <svg v-if="savingLyrics" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{{ savingLyrics ? 'Saving...' : 'Save Lyrics' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { db } from '../../firebase';
-import { collection, query, where, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { state, navigateTo, logoutUser } from '../../store';
 
 export default {
   name: 'ProducerDashboard',
   setup() {
     const songsList = ref([]);
+    
+    // Lyrics Editor state
+    const showLyricsModal = ref(false);
+    const activeSongForLyrics = ref(null);
+    const lyricsText = ref('');
+    const savingLyrics = ref(false);
 
     const userName = computed(() => state.currentUser?.name || 'Producer');
     const userRole = computed(() => state.currentUser?.role || 'producer');
@@ -179,6 +224,33 @@ export default {
       }
     };
 
+    const openLyricsModal = (song) => {
+      activeSongForLyrics.value = song;
+      lyricsText.value = song.lyrics || '';
+      showLyricsModal.value = true;
+    };
+
+    const closeLyricsModal = () => {
+      showLyricsModal.value = false;
+      activeSongForLyrics.value = null;
+      lyricsText.value = '';
+    };
+
+    const saveLyrics = async () => {
+      if (!activeSongForLyrics.value) return;
+      savingLyrics.value = true;
+      try {
+        await updateDoc(doc(db, 'songs', activeSongForLyrics.value.id), {
+          lyrics: lyricsText.value.trim()
+        });
+        showLyricsModal.value = false;
+      } catch (err) {
+        alert("Failed to save lyrics: " + err.message);
+      } finally {
+        savingLyrics.value = false;
+      }
+    };
+
     const logout = async () => {
       await logoutUser();
     };
@@ -192,6 +264,13 @@ export default {
       formatDuration,
       formatDate,
       deleteTrack,
+      showLyricsModal,
+      activeSongForLyrics,
+      lyricsText,
+      savingLyrics,
+      openLyricsModal,
+      closeLyricsModal,
+      saveLyrics,
       logout,
       navigateTo
     };

@@ -70,9 +70,23 @@
                 placeholder="e.g. ml_default"
                 class="w-full h-12 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none px-4 text-sm text-white placeholder-gray-500 transition-all"
               />
-              <span class="text-[9px] text-gray-500 block mt-1 leading-normal">Cloudinary dashboard -> Settings -> Upload -> Upload presets (Unsigned). Default is usually ml_default.</span>
+              <span class="text-[9px] text-gray-500 block mt-1 leading-normal">Cloudinary dashboard -> Settings -> Upload -> Upload presets (Unsigned). Default is usually BeatGround.</span>
             </div>
 
+            <!-- Optional Lyrics Field -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Track Lyrics (Optional)</label>
+              <textarea 
+                v-model="lyrics" 
+                rows="4"
+                placeholder="Enter track lyrics here..."
+                class="w-full p-4 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-xs text-white placeholder-gray-500 transition-all resize-none font-semibold"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- File Uploads Right -->
+          <div class="flex flex-col justify-between space-y-6">
             <!-- Thumbnail Input -->
             <div class="space-y-2">
               <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Cover Art (Square)</label>
@@ -83,7 +97,7 @@
                 @dragleave.prevent="thumbnailDrag = false"
                 @drop.prevent="handleThumbnailDrop"
                 class="relative border border-dashed rounded-2xl flex flex-col items-center justify-center p-6 transition-all"
-                :class="thumbnailDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-850 hover:border-gray-700 bg-gray-900/20'"
+                :class="thumbnailDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-855 hover:border-gray-700 bg-gray-900/20'"
               >
                 <input 
                   type="file" 
@@ -97,19 +111,16 @@
               </div>
 
               <!-- Thumbnail Preview Active -->
-              <div v-else class="relative rounded-2xl overflow-hidden border border-gray-850 aspect-square group shadow-lg max-w-[200px]">
+              <div v-else class="relative rounded-2xl overflow-hidden border border-gray-855 aspect-square group shadow-lg max-w-[140px]">
                 <img :src="thumbnailPreview" class="w-full h-full object-cover" alt="Preview cover" />
                 <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button type="button" @click="removeThumbnail" class="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
-                    Remove Image
+                    Remove
                   </button>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- File Uploads Right -->
-          <div class="flex flex-col justify-between space-y-6">
             <!-- Audio Dropzone -->
             <div class="flex-grow flex flex-col justify-end space-y-2">
               <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Audio File</label>
@@ -119,8 +130,8 @@
                 @dragover.prevent="audioDrag = true"
                 @dragleave.prevent="audioDrag = false"
                 @drop.prevent="handleAudioDrop"
-                class="border border-dashed rounded-2xl flex flex-col items-center justify-center p-12 flex-grow transition-all relative"
-                :class="audioDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-850 hover:border-gray-700 bg-gray-900/20'"
+                class="border border-dashed rounded-2xl flex flex-col items-center justify-center p-8 flex-grow transition-all relative"
+                :class="audioDrag ? 'border-orange-500 bg-orange-500/5' : 'border-gray-855 hover:border-gray-700 bg-gray-900/20'"
               >
                 <input 
                   type="file" 
@@ -128,21 +139,21 @@
                   @change="handleAudioChange"
                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <svg class="w-12 h-12 text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
-                <span class="text-sm font-bold text-gray-300">Drag beat file or browse</span>
-                <span class="text-xs text-gray-500 mt-1">High quality MP3, WAV up to 20MB</span>
+                <svg class="w-10 h-10 text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                <span class="text-xs font-bold text-gray-300">Drag beat file or browse</span>
+                <span class="text-[10px] text-gray-500 mt-1">MP3, WAV up to 20MB</span>
               </div>
 
               <!-- Audio Uploaded Active -->
-              <div v-else class="border border-gray-800 rounded-2xl bg-gray-950/30 p-6 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden shadow-inner flex-grow">
-                <div class="w-12 h-12 rounded-full bg-orange-600/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
-                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+              <div v-else class="border border-gray-800 rounded-2xl bg-gray-955/30 p-4 flex flex-col items-center justify-center text-center gap-2 relative overflow-hidden shadow-inner flex-grow">
+                <div class="w-10 h-10 rounded-full bg-orange-600/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
                 </div>
-                <div class="max-w-[250px] truncate">
-                  <h4 class="font-extrabold text-white text-sm truncate">{{ audioFile.name }}</h4>
-                  <p class="text-xs text-gray-500 mt-0.5">{{ formatBytes(audioFile.size) }}</p>
+                <div class="max-w-[200px] truncate">
+                  <h4 class="font-extrabold text-white text-xs truncate">{{ audioFile.name }}</h4>
+                  <p class="text-[10px] text-gray-500 mt-0.5">{{ formatBytes(audioFile.size) }}</p>
                 </div>
-                <button type="button" @click="removeAudio" class="text-xs font-bold text-red-400 hover:text-red-300 transition-colors mt-2 cursor-pointer">
+                <button type="button" @click="removeAudio" class="text-[10px] font-bold text-red-400 hover:text-red-300 transition-colors mt-1 cursor-pointer">
                   Remove Track File
                 </button>
               </div>
@@ -189,6 +200,7 @@ export default {
   setup() {
     const title = ref('');
     const genre = ref('');
+    const lyrics = ref('');
     
     // Customizable upload preset (defaulted to BeatGround)
     const uploadPreset = ref('BeatGround');
@@ -329,7 +341,7 @@ export default {
 
         // 3. Document insertion into Firestore songs collection
         await addDoc(collection(db, 'songs'), {
-          title: title.value,
+          title: title.value.trim(),
           genre: genre.value,
           audio_url: audioJson.secure_url,
           audio_public_id: audioJson.public_id,
@@ -341,6 +353,7 @@ export default {
           producer_uid: state.currentUser?.uid || '',
           producer_id: state.currentUser?.uid || '', // Save both to prevent any field mismatch!
           producer_name: state.currentUser?.name || 'Producer',
+          lyrics: lyrics.value.trim(),
           created_at: new Date().toISOString()
         });
 
@@ -360,6 +373,7 @@ export default {
     return {
       title,
       genre,
+      lyrics,
       uploadPreset,
       thumbnailFile,
       thumbnailPreview,

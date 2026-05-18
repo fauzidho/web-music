@@ -69,7 +69,7 @@
     >
       <!-- Track Details Left -->
       <div class="flex items-center gap-4 w-1/4 min-w-[200px]">
-        <img :src="player.currentTrack.thumbnail_url" class="w-14 h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0" alt="Cover" />
+        <img :src="player.currentTrack.thumbnail_url" class="w-14 h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0 animate-fade-in" alt="Cover" />
         <div class="truncate">
           <h4 class="font-bold text-white text-sm truncate">{{ player.currentTrack.title }}</h4>
           <p class="text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
@@ -112,7 +112,7 @@
       </div>
 
       <!-- Volume & Options Right -->
-      <div class="flex items-center justify-end gap-4 w-1/4 min-w-[150px] text-gray-400">
+      <div class="flex items-center justify-end gap-4 w-1/4 min-w-[180px] text-gray-400">
         <!-- Volume Icon -->
         <button @click="toggleMute" class="hover:text-white transition-colors cursor-pointer">
           <svg v-if="player.volume === 0" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.5 9H9l5-5v16l-5-5H4.5V9z"/></svg>
@@ -128,6 +128,54 @@
           @input="onVolumeChange"
           class="w-20 h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-orange-500"
         />
+
+        <!-- Lyrics Toggle Button -->
+        <button 
+          @click="toggleLyricsPane"
+          class="w-9 h-9 rounded-lg flex items-center justify-center transition-all cursor-pointer border text-xs"
+          :class="showLyricsPane ? 'border-orange-500 text-orange-500 bg-orange-600/10 font-bold shadow-lg shadow-orange-950/30' : 'border-gray-800 text-gray-400 hover:text-white hover:border-gray-600 bg-gray-900/40'"
+          title="Toggle Lyrics"
+        >
+          🎤
+        </button>
+      </div>
+    </div>
+
+    <!-- Sliding Lyrics Side Pane -->
+    <div 
+      class="fixed top-0 right-0 h-full w-full sm:w-96 bg-[#0a0e1a]/95 border-l border-gray-800 shadow-2xl backdrop-blur-2xl z-[60] flex flex-col transition-all duration-300 transform"
+      :class="showLyricsPane && player.currentTrack ? 'translate-x-0' : 'translate-x-full'"
+    >
+      <!-- Header -->
+      <div class="p-6 border-b border-gray-800 flex items-center justify-between bg-gray-950/40">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">🎤</span>
+          <h4 class="font-extrabold text-white text-base tracking-tight">Song Lyrics</h4>
+        </div>
+        <button @click="showLyricsPane = false" class="text-gray-500 hover:text-white cursor-pointer transition-colors outline-none text-2xl font-bold">
+          &times;
+        </button>
+      </div>
+
+      <!-- Track details -->
+      <div v-if="player.currentTrack" class="p-6 border-b border-gray-850 flex items-center gap-4 bg-gray-950/20">
+        <img :src="player.currentTrack.thumbnail_url" class="w-12 h-12 rounded-lg object-cover border border-gray-800 shadow-md" alt="Cover" />
+        <div class="truncate">
+          <h5 class="font-bold text-white text-sm truncate">{{ player.currentTrack.title }}</h5>
+          <p class="text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
+        </div>
+      </div>
+
+      <!-- Lyrics Body scroll container -->
+      <div class="flex-grow overflow-y-auto p-6 space-y-4 select-text">
+        <div v-if="player.currentTrack?.lyrics" class="text-sm md:text-base text-gray-200 leading-relaxed whitespace-pre-line text-center font-bold tracking-wide py-4">
+          {{ player.currentTrack.lyrics }}
+        </div>
+        <div v-else class="h-full flex flex-col items-center justify-center text-center text-gray-500 py-24 space-y-4">
+          <span class="text-3xl">🤫</span>
+          <h5 class="font-bold text-gray-400 text-sm">No lyrics found</h5>
+          <p class="text-xs text-gray-600 max-w-[200px] mx-auto">The producer hasn't added lyrics for this track yet.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -147,6 +195,7 @@ export default {
     const userRole = computed(() => state.currentUser?.role || 'user');
 
     const player = computed(() => playerStore);
+    const showLyricsPane = ref(false);
 
     // Initialize player store on mounting
     onMounted(() => {
@@ -178,6 +227,10 @@ export default {
       }
     };
 
+    const toggleLyricsPane = () => {
+      showLyricsPane.value = !showLyricsPane.value;
+    };
+
     const logout = async () => {
       await logoutUser();
     };
@@ -187,38 +240,18 @@ export default {
       userName,
       userRole,
       player,
+      showLyricsPane,
       formatTime,
       onSeek,
       onVolumeChange,
       toggleMute,
+      toggleLyricsPane,
       logout,
       navigateTo
     };
   }
 }
 </script>
-
-<style scoped>
-/* Range Slider styling */
-input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-}
-input[type="range"]::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border: 0;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-}
-</style>
 
 <style scoped>
 /* Range Slider styling */
