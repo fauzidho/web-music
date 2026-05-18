@@ -33,7 +33,16 @@ export function navigateTo(route) {
         }
     }
 
-    // Role-based authorization bypassed client-side for smoother transition
+    // Role-based authorization
+    if (route.startsWith('Producer') && userRole !== 'producer' && userRole !== 'admin') {
+        state.currentRoute = 'Home';
+        return;
+    }
+    if (route.startsWith('Admin') && userRole !== 'admin') {
+        state.currentRoute = 'Home';
+        return;
+    }
+
     state.currentRoute = route;
     
     // Auto-scroll to top on view transition

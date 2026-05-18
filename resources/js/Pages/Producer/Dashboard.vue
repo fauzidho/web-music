@@ -144,17 +144,17 @@ export default {
     const userName = computed(() => state.currentUser?.name || 'Producer');
     const userRole = computed(() => state.currentUser?.role || 'producer');
 
-    // Real-time Firestore sync restricted to the current logged-in producer's UID
+    // Real-time Firestore sync supporting both producer_uid and producer_id schemas
     let unsubscribe = null;
     onMounted(() => {
       const uid = state.currentUser?.uid;
       if (uid) {
-        const q = query(collection(db, 'songs'), where('producer_uid', '==', uid));
-        unsubscribe = onSnapshot(q, (snapshot) => {
-          songsList.value = snapshot.docs.map(doc => ({
+        unsubscribe = onSnapshot(collection(db, 'songs'), (snapshot) => {
+          const allSongs = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
           }));
+          songsList.value = allSongs.filter(song => song.producer_uid === uid || song.producer_id === uid);
         }, (err) => {
           console.error("Failed to load catalog:", err);
         });

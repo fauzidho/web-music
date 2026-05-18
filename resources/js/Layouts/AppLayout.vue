@@ -13,9 +13,10 @@
         <nav class="flex items-center gap-4 md:gap-8 text-xs md:text-sm font-semibold text-gray-400">
           <button @click="navigateTo('Home')" class="hover:text-orange-400 transition-colors cursor-pointer outline-none" :class="{ 'text-white': state.currentRoute === 'Home' }">Browse</button>
           
-          <!-- Producer Dashboard Link (Always Visible) -->
+          <!-- Producer Dashboard Link -->
           <button 
-            @click="goToProducerPanel" 
+            v-if="userRole === 'producer' || userRole === 'admin'"
+            @click="navigateTo('ProducerDashboard')" 
             class="hover:text-orange-400 transition-colors cursor-pointer outline-none" 
             :class="{ 'text-white': state.currentRoute.startsWith('Producer') }"
           >
@@ -177,24 +178,6 @@ export default {
       }
     };
 
-    const goToProducerPanel = async () => {
-      if (!state.currentUser) {
-        navigateTo('Login');
-        return;
-      }
-      // Upgrade role to producer in Firestore and local store automatically if listener
-      if (state.currentUser.role !== 'producer' && state.currentUser.role !== 'admin') {
-        try {
-          const userRef = doc(db, 'users', state.currentUser.uid);
-          await updateDoc(userRef, { role: 'producer' });
-          state.currentUser.role = 'producer';
-        } catch (err) {
-          console.error("Auto promotion failed, proceeding anyway:", err);
-        }
-      }
-      navigateTo('ProducerDashboard');
-    };
-
     const logout = async () => {
       await logoutUser();
     };
@@ -208,7 +191,6 @@ export default {
       onSeek,
       onVolumeChange,
       toggleMute,
-      goToProducerPanel,
       logout,
       navigateTo
     };

@@ -339,6 +339,7 @@ export default {
           plays_count: 0,
           likes_count: 0,
           producer_uid: state.currentUser?.uid || '',
+          producer_id: state.currentUser?.uid || '', // Save both to prevent any field mismatch!
           producer_name: state.currentUser?.name || 'Producer',
           created_at: new Date().toISOString()
         });
