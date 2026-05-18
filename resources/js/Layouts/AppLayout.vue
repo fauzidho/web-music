@@ -40,13 +40,6 @@
               <div class="text-sm font-bold text-white leading-none">{{ userName }}</div>
               <div class="flex items-center justify-end gap-1.5 mt-1">
                 <span class="text-[9px] text-orange-400 font-bold uppercase tracking-wider bg-orange-600/10 px-1.5 py-0.5 rounded border border-orange-500/10">{{ userRole }}</span>
-                <button 
-                  @click="toggleMyRole" 
-                  class="text-[9px] text-gray-500 hover:text-orange-400 font-bold uppercase tracking-wider underline cursor-pointer outline-none transition-colors"
-                  title="Switch role instantly for testing"
-                >
-                  [ Switch ]
-                </button>
               </div>
             </div>
             <div class="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white shadow-md select-none">
@@ -184,25 +177,6 @@ export default {
       }
     };
 
-    const toggleMyRole = async () => {
-      if (!state.currentUser) return;
-      const nextRole = state.currentUser.role === 'producer' ? 'user' : 'producer';
-      try {
-        const userRef = doc(db, 'users', state.currentUser.uid);
-        await updateDoc(userRef, { role: nextRole });
-        state.currentUser.role = nextRole;
-        
-        // Auto-redirect to appropriate dashboards based on active role
-        if (nextRole === 'producer') {
-          navigateTo('ProducerDashboard');
-        } else {
-          navigateTo('Home');
-        }
-      } catch (err) {
-        console.error("Failed to toggle own role:", err);
-      }
-    };
-
     const goToProducerPanel = async () => {
       if (!state.currentUser) {
         navigateTo('Login');
@@ -234,7 +208,6 @@ export default {
       onSeek,
       onVolumeChange,
       toggleMute,
-      toggleMyRole,
       goToProducerPanel,
       logout,
       navigateTo

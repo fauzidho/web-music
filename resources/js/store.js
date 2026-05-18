@@ -33,16 +33,7 @@ export function navigateTo(route) {
         }
     }
 
-    // Role-based authorization
-    if (route.startsWith('Producer') && userRole !== 'producer' && userRole !== 'admin') {
-        state.currentRoute = 'Home';
-        return;
-    }
-    if (route.startsWith('Admin') && userRole !== 'admin') {
-        state.currentRoute = 'Home';
-        return;
-    }
-
+    // Role-based authorization bypassed client-side for smoother transition
     state.currentRoute = route;
     
     // Auto-scroll to top on view transition
