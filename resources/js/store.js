@@ -7,7 +7,8 @@ import { doc, getDoc } from 'firebase/firestore';
 export const state = reactive({
     currentUser: null,
     currentRoute: 'Home',
-    loadingAuth: true
+    loadingAuth: true,
+    isRegistering: false
 });
 
 // Helper checking function for route transition guard
@@ -52,6 +53,10 @@ export function navigateTo(route) {
 // Initialize Auth State Listener
 export function initAuthListener() {
     onAuthStateChanged(auth, async (firebaseUser) => {
+        if (state.isRegistering) {
+            // Bypass during active registration to let Register.vue handle the write and redirect cleanly
+            return;
+        }
         state.loadingAuth = true;
         if (firebaseUser) {
             try {

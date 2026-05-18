@@ -103,7 +103,7 @@ import { ref } from 'vue';
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { navigateTo } from '../../store';
+import { state, navigateTo } from '../../store';
 
 export default {
   name: 'Register',
@@ -121,6 +121,7 @@ export default {
         return;
       }
 
+      state.isRegistering = true;
       loading.value = true;
       error.value = null;
 
@@ -133,17 +134,23 @@ export default {
         await updateProfile(user, { displayName: name.value });
 
         // 3. Save profile document directly to Firestore users collection
-        await setDoc(doc(db, 'users', user.uid), {
+        const profileData = {
           uid: user.uid,
           name: name.value,
           email: email.value,
           role: role.value,
           created_at: new Date().toISOString()
-        });
+        };
+        await setDoc(doc(db, 'users', user.uid), profileData);
 
+        // Update local session state directly before navigating
+        state.currentUser = profileData;
+
+        state.isRegistering = false;
         // 4. Redirect to Home
         navigateTo('Home');
       } catch (err) {
+        state.isRegistering = false;
         console.error(err);
         if (err.code === 'auth/email-already-in-use') {
           error.value = 'This email address is already registered.';
