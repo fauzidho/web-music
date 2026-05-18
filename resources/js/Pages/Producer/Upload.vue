@@ -190,8 +190,8 @@ export default {
     const title = ref('');
     const genre = ref('');
     
-    // Customizable upload preset (defaulted to standard ml_default)
-    const uploadPreset = ref('ml_default');
+    // Customizable upload preset (defaulted to BeatGround)
+    const uploadPreset = ref('BeatGround');
 
     const thumbnailFile = ref(null);
     const thumbnailPreview = ref(null);
