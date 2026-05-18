@@ -59,7 +59,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-gray-950 bg-[#060810]/40 py-6 text-center text-xs text-gray-600">
-      &copy; 2026 BeatGround. Premium SoundCloud Clone powered by Vue SPA & Firebase.
+      &copy; 2026 BeatGround — A next-gen music platform by Fauzi Ridho Anshori
     </footer>
 
     <!-- Persistent Bottom Audio Player Bar -->
