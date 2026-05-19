@@ -88,21 +88,33 @@
     <!-- Persistent Bottom Audio Player Bar -->
     <div 
       v-if="player.currentTrack" 
-      class="fixed bottom-0 left-0 right-0 h-24 bg-[#0d1222]/95 border-t border-gray-800 backdrop-blur-xl z-50 flex items-center justify-between px-6 shadow-2xl transition-all duration-300"
+      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-3 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:flex-row items-center justify-between px-4 md:px-6 shadow-2xl transition-all duration-300 gap-3 md:gap-0"
     >
-      <!-- Track Details Left -->
-      <div class="flex items-center gap-4 w-1/4 min-w-[200px]">
-        <img :src="player.currentTrack.thumbnail_url" class="w-14 h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0 animate-fade-in" alt="Cover" />
-        <div class="truncate">
-          <h4 class="font-bold text-white text-sm truncate">{{ player.currentTrack.title }}</h4>
-          <p class="text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
+      <!-- Top Row on Mobile, Left Column on Desktop -->
+      <div class="flex items-center justify-between w-full md:w-auto md:justify-start">
+        <!-- Track Details Left -->
+        <div class="flex items-center gap-3 md:gap-4 md:min-w-[200px]">
+          <img :src="player.currentTrack.thumbnail_url" class="w-10 h-10 md:w-14 md:h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0 animate-fade-in" alt="Cover" />
+          <div class="truncate max-w-[150px] sm:max-w-xs md:max-w-full">
+            <h4 class="font-bold text-white text-xs md:text-sm truncate">{{ player.currentTrack.title }}</h4>
+            <p class="text-[10px] md:text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
+          </div>
+        </div>
+
+        <!-- Mobile-Only Controls (Play/Pause & Lyrics) -->
+        <div class="flex md:hidden items-center gap-3">
+          <button @click="toggleLyricsPane" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer border text-xs" :class="showLyricsPane ? 'border-orange-500 text-orange-500 bg-orange-600/10' : 'border-gray-800 text-gray-400'">🎤</button>
+          <button @click="player.togglePlay" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-black shadow-lg">
+            <svg v-if="!player.isPlaying" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
         </div>
       </div>
 
       <!-- Player Controls & Timeline Center -->
-      <div class="flex flex-col items-center gap-2 flex-grow max-w-2xl px-6">
-        <!-- Buttons -->
-        <div class="flex items-center gap-5">
+      <div class="flex flex-col items-center gap-1.5 md:gap-2 w-full md:flex-grow md:max-w-2xl md:px-6">
+        <!-- Buttons (Hidden on mobile, uses mobile controls above) -->
+        <div class="hidden md:flex items-center gap-5">
           <button @click="player.prev" class="text-gray-400 hover:text-white transition-colors cursor-pointer" title="Previous Track">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
           </button>
@@ -118,7 +130,7 @@
         </div>
 
         <!-- Timeline Slider -->
-        <div class="flex items-center gap-3 w-full text-xs font-semibold text-gray-500">
+        <div class="flex items-center gap-2 md:gap-3 w-full text-[10px] md:text-xs font-semibold text-gray-500">
           <span>{{ formatTime(player.currentTime) }}</span>
           <div class="flex-grow relative group py-2">
             <input 
@@ -127,7 +139,7 @@
               :max="player.duration || 100" 
               :value="player.currentTime"
               @input="onSeek"
-              class="w-full h-1 rounded-full appearance-none outline-none cursor-pointer accent-white group-hover:h-1.5 transition-all"
+              class="w-full h-1 rounded-full appearance-none outline-none cursor-pointer accent-white md:group-hover:h-1.5 transition-all"
               :style="{ background: `linear-gradient(to right, #ffffff ${(player.currentTime / (player.duration || 1)) * 100}%, #1f2937 ${(player.currentTime / (player.duration || 1)) * 100}%)` }"
             />
           </div>
@@ -135,8 +147,8 @@
         </div>
       </div>
 
-      <!-- Volume & Options Right -->
-      <div class="flex items-center justify-end gap-4 w-1/4 min-w-[180px] text-gray-400">
+      <!-- Volume & Options Right (Hidden on mobile) -->
+      <div class="hidden md:flex items-center justify-end gap-4 w-1/4 min-w-[180px] text-gray-400">
         <!-- Volume Icon -->
         <button @click="toggleMute" class="hover:text-white transition-colors cursor-pointer">
           <svg v-if="player.volume === 0" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.5 9H9l5-5v16l-5-5H4.5V9z"/></svg>
