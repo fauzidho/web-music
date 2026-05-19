@@ -143,7 +143,7 @@
 
     <!-- Sliding Lyrics Side Pane -->
     <div 
-      class="fixed top-0 right-0 h-full w-full sm:w-96 bg-[#0a0e1a]/95 border-l border-gray-800 shadow-2xl backdrop-blur-2xl z-[60] flex flex-col transition-all duration-300 transform"
+      class="fixed top-20 right-0 bottom-24 w-full sm:w-96 bg-[#0a0e1a]/98 border-l border-gray-800 shadow-2xl backdrop-blur-2xl z-[45] flex flex-col transition-transform duration-300"
       :class="showLyricsPane && player.currentTrack ? 'translate-x-0' : 'translate-x-full'"
     >
       <!-- Header -->

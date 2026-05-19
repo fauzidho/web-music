@@ -1,4 +1,6 @@
 import { reactive } from 'vue';
+import { db } from '../firebase';
+import { doc, updateDoc, increment } from 'firebase/firestore';
 
 export const playerStore = reactive({
   currentTrack: null,
@@ -9,21 +11,34 @@ export const playerStore = reactive({
   volume: 0.8,
   queue: [],
   currentIndex: -1,
+  // Track if play count was already incremented for the current track session
+  _countedTrackId: null,
 
   init() {
     if (this.audio) return;
-    
+
     if (typeof window !== 'undefined') {
       this.audio = new Audio();
       this.audio.volume = this.volume;
 
-      // Realtime playback updates
+      // Realtime playback time updates
       this.audio.addEventListener('timeupdate', () => {
         this.currentTime = Math.round(this.audio.currentTime);
+
+        // Increment play count only after 15 seconds of actual listening (not just clicking)
+        // and only once per track session to prevent spam
+        if (
+          this.currentTrack &&
+          this.currentTime >= 15 &&
+          this._countedTrackId !== this.currentTrack.id
+        ) {
+          this._countedTrackId = this.currentTrack.id;
+          this._incrementPlayCount(this.currentTrack.id);
+        }
       });
 
       this.audio.addEventListener('durationchange', () => {
-        if (this.audio.duration) {
+        if (this.audio.duration && isFinite(this.audio.duration)) {
           this.duration = Math.round(this.audio.duration);
         }
       });
@@ -32,6 +47,17 @@ export const playerStore = reactive({
       this.audio.addEventListener('ended', () => {
         this.next();
       });
+    }
+  },
+
+  // Direct Firestore plays_count increment — replaces old Laravel fetch call
+  async _incrementPlayCount(trackId) {
+    try {
+      await updateDoc(doc(db, 'songs', trackId), {
+        plays_count: increment(1)
+      });
+    } catch (err) {
+      console.error('Failed to increment play count:', err);
     }
   },
 
@@ -48,30 +74,23 @@ export const playerStore = reactive({
       this.currentIndex = 0;
     }
 
-    // Toggle if same track is clicked
+    // Toggle play/pause if same track is clicked
     if (this.currentTrack?.id === track.id) {
       this.togglePlay();
       return;
     }
 
     try {
+      // Reset counted flag for new track so 15s timer starts fresh
+      this._countedTrackId = null;
       this.currentTrack = track;
+      this.currentTime = 0;
+      this.duration = 0;
       this.audio.src = track.audio_url;
       this.audio.play();
       this.isPlaying = true;
-
-      // Track play count in Firestore in the background
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      fetch(`/track/${track.id}/play`, { 
-        method: 'POST', 
-        headers: { 
-          'X-CSRF-TOKEN': csrfToken,
-          'Content-Type': 'application/json'
-        } 
-      }).catch(err => console.error("Firestore counter failed:", err));
-
     } catch (err) {
-      console.error("Audio playback error:", err);
+      console.error('Audio playback error:', err);
     }
   },
 

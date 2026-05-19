@@ -171,11 +171,20 @@
 
                 <button 
                   @click="likeSong(song)" 
-                  class="w-7 h-7 rounded-lg bg-gray-900 border hover:bg-pink-500/10 hover:border-pink-500/30 flex items-center justify-center transition-colors"
-                  :class="isLiked(song.id) ? 'border-pink-500 text-pink-500' : 'border-gray-800 text-gray-500'"
-                  title="Like Track"
+                  class="w-7 h-7 rounded-lg bg-gray-900 border flex items-center justify-center transition-all duration-200 active:scale-75"
+                  :class="isLiked(song.id) 
+                    ? 'border-pink-500 bg-pink-500/10 text-pink-500 shadow-sm shadow-pink-500/20' 
+                    : 'border-gray-800 text-gray-500 hover:bg-pink-500/10 hover:border-pink-500/30 hover:text-pink-400'"
+                  :title="isLiked(song.id) ? 'Unlike Track' : 'Like Track'"
                 >
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <!-- Filled heart = liked -->
+                  <svg v-if="isLiked(song.id)" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  <!-- Outline heart = not liked -->
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -485,7 +494,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { playerStore } from '../Stores/playerStore';
 import { db } from '../firebase';
-import { collection, onSnapshot, doc, updateDoc, increment, addDoc, deleteDoc, query, where, setDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, increment, addDoc, deleteDoc, query, where, setDoc, getDoc } from 'firebase/firestore';
 import { state, navigateTo } from '../store';
 
 export default {
@@ -519,8 +528,8 @@ export default {
       description: ''
     });
 
-    // Track localized likes dynamically in UI for speed
-    const likedTracks = ref([]);
+    // Liked track IDs for current user — loaded from Firestore on mount
+    const likedTracks = ref(new Set());
 
     const genresList = ['All', 'Lo-Fi', 'Synthwave', 'Hip-Hop', 'EDM', 'Acoustic'];
 
@@ -531,51 +540,55 @@ export default {
     let unsubPlaylists = null;
     let unsubBanner = null;
 
-    onMounted(() => {
+    onMounted(async () => {
       // 1. Sync Songs
       unsubscribe = onSnapshot(collection(db, 'songs'), (snapshot) => {
-        songsList.value = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
+        songsList.value = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
         }));
       }, (err) => {
-        console.error("Firestore songs listener failed:", err);
+        console.error('Firestore songs listener failed:', err);
       });
 
-      // 2. Sync User's Playlists if logged in
       const uid = state.currentUser?.uid;
+
       if (uid) {
+        // 2. Sync User's Playlists
         const q = query(collection(db, 'playlists'), where('user_uid', '==', uid));
         unsubPlaylists = onSnapshot(q, (snapshot) => {
-          playlists.value = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
+          playlists.value = snapshot.docs.map(d => ({
+            id: d.id,
+            ...d.data()
           }));
-          
           // Re-sync active selected playlist in details view
           if (selectedPlaylist.value) {
-            const updatedSelected = playlists.value.find(p => p.id === selectedPlaylist.value.id);
-            if (updatedSelected) {
-              selectedPlaylist.value = updatedSelected;
-            } else {
-              selectedPlaylist.value = null;
-            }
+            const updated = playlists.value.find(p => p.id === selectedPlaylist.value.id);
+            selectedPlaylist.value = updated || null;
           }
         }, (err) => {
-          console.error("Firestore playlists listener failed:", err);
+          console.error('Firestore playlists listener failed:', err);
         });
+
+        // 3. Load liked tracks from Firestore (likes/{uid})
+        try {
+          const likesDoc = await getDoc(doc(db, 'likes', uid));
+          if (likesDoc.exists()) {
+            const data = likesDoc.data();
+            likedTracks.value = new Set(data.song_ids || []);
+          }
+        } catch (err) {
+          console.warn('Could not load liked tracks:', err);
+        }
       }
 
-      // 3. Sync Homepage Banner Settings
+      // 4. Sync Homepage Banner Settings
       unsubBanner = onSnapshot(doc(db, 'settings', 'homepage_banner'), (docSnap) => {
         if (docSnap.exists()) {
-          bannerData.value = {
-            ...bannerData.value,
-            ...docSnap.data()
-          };
+          bannerData.value = { ...bannerData.value, ...docSnap.data() };
         }
       }, (err) => {
-        console.error("Firestore banner listener failed:", err);
+        console.error('Firestore banner listener failed:', err);
       });
     });
 
@@ -616,21 +629,39 @@ export default {
     };
 
     const isLiked = (songId) => {
-      return likedTracks.value.includes(songId);
+      return likedTracks.value.has(songId);
     };
 
     const likeSong = async (song) => {
-      if (isLiked(song.id)) return; // Simple debounce
+      const uid = state.currentUser?.uid;
+      if (!uid) return;
+
+      const liked = isLiked(song.id);
+      const songRef  = doc(db, 'songs', song.id);
+      const likesRef = doc(db, 'likes', uid);
 
       try {
-        const songRef = doc(db, 'songs', song.id);
-        await updateDoc(songRef, {
-          likes_count: increment(1)
-        });
-        
-        likedTracks.value.push(song.id);
+        if (liked) {
+          // --- UNLIKE ---
+          await updateDoc(songRef, { likes_count: increment(-1) });
+          likedTracks.value.delete(song.id);
+          // Persist removal to Firestore likes doc
+          const likesSnap = await getDoc(likesRef);
+          const current = likesSnap.exists() ? (likesSnap.data().song_ids || []) : [];
+          await setDoc(likesRef, { song_ids: current.filter(id => id !== song.id) });
+        } else {
+          // --- LIKE ---
+          await updateDoc(songRef, { likes_count: increment(1) });
+          likedTracks.value.add(song.id);
+          // Persist addition to Firestore likes doc
+          const likesSnap = await getDoc(likesRef);
+          const current = likesSnap.exists() ? (likesSnap.data().song_ids || []) : [];
+          if (!current.includes(song.id)) {
+            await setDoc(likesRef, { song_ids: [...current, song.id] });
+          }
+        }
       } catch (err) {
-        console.error("Like action failed:", err);
+        console.error('Like/unlike action failed:', err);
       }
     };
 
