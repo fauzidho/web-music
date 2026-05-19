@@ -104,7 +104,8 @@
               :max="player.duration || 100" 
               :value="player.currentTime"
               @input="onSeek"
-              class="w-full h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-orange-500 group-hover:h-1.5 transition-all"
+              class="w-full h-1 rounded-full appearance-none outline-none cursor-pointer accent-white group-hover:h-1.5 transition-all"
+              :style="{ background: `linear-gradient(to right, #ffffff ${(player.currentTime / (player.duration || 1)) * 100}%, #1f2937 ${(player.currentTime / (player.duration || 1)) * 100}%)` }"
             />
           </div>
           <span>{{ formatTime(player.duration) }}</span>
@@ -126,7 +127,8 @@
           step="0.05"
           :value="player.volume"
           @input="onVolumeChange"
-          class="w-20 h-1 bg-gray-800 rounded-full appearance-none outline-none cursor-pointer accent-orange-500"
+          class="w-20 h-1 rounded-full appearance-none outline-none cursor-pointer accent-white"
+          :style="{ background: `linear-gradient(to right, #ffffff ${player.volume * 100}%, #1f2937 ${player.volume * 100}%)` }"
         />
 
         <!-- Lyrics Toggle Button -->
