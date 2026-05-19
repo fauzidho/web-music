@@ -58,8 +58,31 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-gray-950 bg-[#060810]/40 py-6 text-center text-xs text-gray-600">
-      &copy; 2026 BeatGround — A next-gen music platform by Fauzi Ridho Anshori
+    <footer class="border-t border-gray-800/50 bg-gradient-to-b from-[#0a0e1a]/80 to-[#060810] pt-12 pb-16 px-6 relative overflow-hidden mt-auto">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
+        <!-- Brand -->
+        <div class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+          <img src="/BeatGround.png" class="w-8 h-8 rounded-lg shadow-lg" alt="Logo" />
+          <div class="text-left">
+            <h5 class="text-sm font-black text-gray-200 tracking-tight">BeatGround</h5>
+            <p class="text-[9px] text-orange-500/80 font-bold uppercase tracking-widest mt-0.5">Next-Gen Audio Platform</p>
+          </div>
+        </div>
+        
+        <!-- Links -->
+        <div class="flex flex-wrap justify-center gap-x-8 gap-y-3 text-xs font-bold text-gray-500 uppercase tracking-wider">
+          <a href="#" class="hover:text-orange-400 transition-colors">Discover</a>
+          <a href="#" class="hover:text-orange-400 transition-colors">For Creators</a>
+          <a href="#" class="hover:text-orange-400 transition-colors">Terms of Service</a>
+          <a href="#" class="hover:text-orange-400 transition-colors">Privacy Policy</a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-xs text-gray-600 font-medium text-center md:text-right">
+          &copy; 2026 Crafted by <span class="text-gray-400 font-bold hover:text-white transition-colors cursor-pointer">Fauzi Ridho Anshori</span>
+        </div>
+      </div>
     </footer>
 
     <!-- Persistent Bottom Audio Player Bar -->

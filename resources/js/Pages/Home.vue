@@ -94,10 +94,28 @@
         </div>
 
         <!-- Empty State -->
-        <div v-if="filteredSongs.length === 0" class="py-24 text-center border border-gray-800 border-dashed rounded-3xl space-y-4 bg-gray-900/20">
+        <div v-if="!isLoading && filteredSongs.length === 0" class="py-24 text-center border border-gray-800 border-dashed rounded-3xl space-y-4 bg-gray-900/20">
           <svg class="w-12 h-12 text-gray-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/></svg>
           <h4 class="text-lg font-bold text-white">No tracks match your query</h4>
           <p class="text-sm text-gray-500 max-w-xs mx-auto">Try clearing search query or selecting a different genre category.</p>
+        </div>
+
+        <!-- Skeleton Loaders -->
+        <div v-else-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div v-for="i in 8" :key="'skel-'+i" class="bg-gray-900/30 border border-gray-800/60 rounded-2xl p-4 flex flex-col gap-4 animate-pulse">
+            <div class="w-full aspect-square bg-gray-800/80 rounded-xl"></div>
+            <div class="space-y-2">
+              <div class="h-4 bg-gray-800/80 rounded w-3/4"></div>
+              <div class="h-3 bg-gray-800/50 rounded w-1/2"></div>
+            </div>
+            <div class="mt-2 pt-3 border-t border-gray-800/50 flex justify-between">
+              <div class="h-3 bg-gray-800/50 rounded w-1/4"></div>
+              <div class="flex gap-2">
+                <div class="w-6 h-6 bg-gray-800/80 rounded-md"></div>
+                <div class="w-6 h-6 bg-gray-800/80 rounded-md"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Grid list -->
@@ -221,13 +239,18 @@
         <div class="space-y-3">
           <h4 class="font-extrabold text-white text-base tracking-tight mb-4">Your Collections</h4>
           
-          <div v-if="playlists.length === 0" class="text-center p-8 border border-gray-800 border-dashed rounded-2xl text-gray-500">
+          <div v-if="!isLoading && playlists.length === 0" class="text-center p-8 border border-gray-800 border-dashed rounded-2xl text-gray-500">
             <svg class="w-8 h-8 text-gray-700 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             <p class="font-bold text-gray-400 text-xs">No playlists created</p>
             <p class="text-[10px] text-gray-600 mt-0.5">Use the form above to get started!</p>
           </div>
 
+          <div v-else-if="isLoading" class="space-y-3 animate-pulse">
+            <div v-for="i in 3" :key="'skel-pl-'+i" class="h-16 rounded-2xl bg-gray-900/40 border border-gray-800/50"></div>
+          </div>
+
           <div 
+            v-else
             v-for="pl in playlists" 
             :key="pl.id"
             @click="selectedPlaylist = pl"
@@ -504,6 +527,7 @@ export default {
     const searchQuery = ref('');
     const selectedGenre = ref('All');
     const songsList = ref([]);
+    const isLoading = ref(true);
     
     // Playlists reactive state
     const playlists = ref([]);
@@ -547,8 +571,10 @@ export default {
           id: d.id,
           ...d.data()
         }));
+        isLoading.value = false;
       }, (err) => {
         console.error('Firestore songs listener failed:', err);
+        isLoading.value = false;
       });
 
       const uid = state.currentUser?.uid;
@@ -808,6 +834,7 @@ export default {
       selectedGenre,
       genresList,
       filteredSongs,
+      isLoading,
       player,
       isPlayingSong,
       playSong,
