@@ -177,6 +177,16 @@
 
               <!-- Interactivity buttons -->
               <div class="flex gap-2">
+                <!-- Comment Button -->
+                <button 
+                  @click="openCommentsModal(song)" 
+                  class="w-auto px-2.5 h-7 rounded-lg bg-gray-900 border border-gray-800 hover:bg-orange-500/10 hover:border-orange-500/30 flex items-center justify-center gap-1.5 transition-colors text-gray-400 hover:text-orange-400"
+                  title="View Comments"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                  <span class="text-[10px] font-bold">{{ song.comments_count || 0 }}</span>
+                </button>
+
                 <!-- Add to Playlist Button -->
                 <button 
                   v-if="state.currentUser"
@@ -510,6 +520,73 @@
         </form>
       </div>
     </div>
+    <!-- MODAL OVERLAY: COMMENTS -->
+    <div 
+      v-if="showCommentsModal" 
+      class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md"
+      @click.self="closeCommentsModal"
+    >
+      <div class="w-full max-w-lg bg-[#0f1423] border border-gray-800 rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+        <!-- Header -->
+        <div class="p-5 border-b border-gray-800 flex items-center justify-between bg-gray-950/40">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">💬</span>
+            <div>
+              <h4 class="font-extrabold text-white text-base tracking-tight">Comments</h4>
+              <p class="text-xs text-orange-400 font-medium truncate max-w-[200px]">{{ activeSongForComments?.title }}</p>
+            </div>
+          </div>
+          <button @click="closeCommentsModal" class="text-gray-500 hover:text-white cursor-pointer transition-colors outline-none text-xl font-bold">
+            &times;
+          </button>
+        </div>
+
+        <!-- Comments List -->
+        <div class="flex-grow overflow-y-auto p-5 space-y-4">
+          <div v-if="commentsList.length === 0" class="text-center py-10 text-gray-500 space-y-2">
+            <svg class="w-10 h-10 mx-auto text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <p class="text-sm font-semibold">Be the first to comment!</p>
+          </div>
+          
+          <div v-for="comment in commentsList" :key="comment.id" class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white text-xs flex-shrink-0">
+              {{ comment.user_name ? comment.user_name[0].toUpperCase() : 'U' }}
+            </div>
+            <div class="bg-gray-900/50 border border-gray-800 rounded-2xl rounded-tl-none p-3 flex-grow">
+              <div class="flex justify-between items-start mb-1">
+                <span class="text-xs font-bold text-gray-300">{{ comment.user_name }}</span>
+                <span class="text-[9px] text-gray-500">{{ new Date(comment.created_at).toLocaleDateString() }}</span>
+              </div>
+              <p class="text-sm text-gray-400 whitespace-pre-wrap leading-relaxed">{{ comment.text }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment Input -->
+        <div class="p-4 border-t border-gray-800 bg-gray-950/60" v-if="state.currentUser">
+          <form @submit.prevent="submitComment" class="flex gap-3">
+            <input 
+              v-model="newCommentText"
+              type="text" 
+              placeholder="Write a comment..."
+              required
+              class="flex-grow h-10 px-4 rounded-xl bg-gray-900 border border-gray-800 focus:border-orange-500 outline-none text-sm text-white placeholder-gray-500 transition-all"
+            />
+            <button 
+              type="submit"
+              class="h-10 px-4 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm transition-colors cursor-pointer flex-shrink-0"
+              :disabled="!newCommentText.trim()"
+            >
+              Post
+            </button>
+          </form>
+        </div>
+        <div v-else class="p-4 border-t border-gray-800 bg-gray-950/60 text-center">
+          <p class="text-xs text-gray-500">Please <a href="/login" class="text-orange-400 hover:underline">log in</a> to comment.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -537,10 +614,10 @@ export default {
     const activeSongForPlaylist = ref(null);
     const quickPlaylistName = ref('');
 
-    // Banner settings state
+    // Banner modal state
     const bannerData = ref({
-      tag: '🎧 Live Streaming',
-      title_normal: 'Explore Trending',
+      tag: 'NEW RELEASE',
+      title_normal: 'Discover',
       title_highlight: 'Independent Beats',
       description: 'Welcome to BeatGround, your personal gateway to real-time audio. Click play on any track to start streaming without interruptions. Explore by genre, search for your favorite producers, or organize your favorite tracks into playlists!'
     });
@@ -551,6 +628,67 @@ export default {
       title_highlight: '',
       description: ''
     });
+
+    // Comments Modal State
+    const showCommentsModal = ref(false);
+    const activeSongForComments = ref(null);
+    const commentsList = ref([]);
+    const newCommentText = ref('');
+    let unsubComments = null;
+
+    const openCommentsModal = (song) => {
+      activeSongForComments.value = song;
+      showCommentsModal.value = true;
+      commentsList.value = [];
+      
+      const q = query(
+        collection(db, 'comments'), 
+        where('song_id', '==', song.id)
+      );
+      unsubComments = onSnapshot(q, (snapshot) => {
+        const list = snapshot.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        }));
+        // Sort by newest first
+        list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        commentsList.value = list;
+      }, (err) => {
+        console.error('Failed to load comments:', err);
+      });
+    };
+
+    const closeCommentsModal = () => {
+      showCommentsModal.value = false;
+      activeSongForComments.value = null;
+      if (unsubComments) {
+        unsubComments();
+        unsubComments = null;
+      }
+      newCommentText.value = '';
+    };
+
+    const submitComment = async () => {
+      if (!newCommentText.value.trim() || !state.currentUser || !activeSongForComments.value) return;
+      try {
+        const text = newCommentText.value.trim();
+        newCommentText.value = ''; // clear immediately for UX
+        
+        await addDoc(collection(db, 'comments'), {
+          song_id: activeSongForComments.value.id,
+          user_uid: state.currentUser.uid,
+          user_name: state.currentUser.name,
+          text: text,
+          created_at: new Date().toISOString()
+        });
+        
+        await updateDoc(doc(db, 'songs', activeSongForComments.value.id), {
+          comments_count: increment(1)
+        });
+      } catch (err) {
+        console.error("Failed to post comment:", err);
+      }
+    };
 
     // Liked track IDs for current user — loaded from Firestore on mount
     const likedTracks = ref(new Set());
@@ -863,7 +1001,16 @@ export default {
       showEditBannerModal,
       editBannerForm,
       openEditBannerModal,
-      saveBannerSettings
+      saveBannerSettings,
+
+      // Comments returns
+      showCommentsModal,
+      activeSongForComments,
+      commentsList,
+      newCommentText,
+      openCommentsModal,
+      closeCommentsModal,
+      submitComment
     };
   }
 }
