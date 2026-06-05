@@ -33,6 +33,16 @@
             <p v-if="userProfile.email && (isMyProfile || userProfile.role === 'producer')" class="text-xs md:text-sm text-gray-500 font-medium font-mono">
               {{ userProfile.email }}
             </p>
+            
+            <!-- Self Promote to Producer Option -->
+            <div v-if="isMyProfile && userProfile.role === 'user'" class="pt-2">
+              <button 
+                @click="upgradeToProducer"
+                class="px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:opacity-90 text-white font-bold text-xs rounded-xl shadow-lg transition-all hover:scale-105 cursor-pointer flex items-center gap-1.5 mx-auto md:mx-0"
+              >
+                <span>🎹 Upgrade to Producer Account</span>
+              </button>
+            </div>
           </div>
 
           <!-- Bio -->
@@ -476,6 +486,27 @@ export default {
       }
     };
 
+    const upgradeToProducer = async () => {
+      if (!confirm("Are you sure you want to upgrade your account to a Producer? This will allow you to release and manage tracks on BeatGround.")) return;
+      try {
+        const uid = targetUid.value;
+        const userRef = doc(db, 'users', uid);
+        await updateDoc(userRef, {
+          role: 'producer'
+        });
+        
+        // Sync local auth state
+        if (state.currentUser && state.currentUser.uid === uid) {
+          state.currentUser.role = 'producer';
+        }
+        
+        alert("Congratulations! You are now a Producer. Refreshing your panel access...");
+      } catch (err) {
+        console.error("Failed to upgrade to producer:", err);
+        alert("Failed to upgrade role: " + err.message);
+      }
+    };
+
     // --- Audio Player ---
     const player = computed(() => playerStore);
 
@@ -534,6 +565,7 @@ export default {
       openEditModal,
       closeEditModal,
       saveProfile,
+      upgradeToProducer,
       
       // Player
       player,

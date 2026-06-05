@@ -235,8 +235,14 @@ export default {
           await updateDoc(doc(db, 'users', user.id), {
             role: nextRole
           });
+          alert(`Successfully updated user "${user.name}" role to ${nextRole}!`);
         } catch (err) {
           console.error("Failed to update user role:", err);
+          if (err.code === 'permission-denied') {
+            alert(`Gagal mengubah role: Firebase Security Rules memblokir penulisan ini.\n\nTip: Karena Firestore dijalankan langsung dari client, Anda harus memperbarui Firebase Security Rules di Firebase Console agar mengizinkan Admin mengubah role pengguna lain.\n\nGunakan aturan berikut di Firebase Console:\n\nmatch /users/{userId} {\n  allow read: if true;\n  allow create, update: if request.auth != null && (request.auth.uid == userId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin");\n}`);
+          } else {
+            alert("Failed to update user role: " + err.message);
+          }
         }
       }
     };
