@@ -1,36 +1,36 @@
 <template>
-  <div class="space-y-10">
+  <div class="space-y-6 md:space-y-10">
     <!-- Welcome Spotlight Banner -->
-    <div class="relative bg-gradient-to-r from-orange-900/40 via-amber-950/20 to-[#0e1322]/80 border border-orange-500/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-xl">
+    <div class="relative bg-gradient-to-r from-orange-900/40 via-amber-950/20 to-[#0e1322]/80 border border-orange-500/10 rounded-2xl md:rounded-3xl p-5 md:p-12 overflow-hidden shadow-xl">
       <div class="absolute -top-24 -right-24 w-80 h-80 bg-orange-600/10 rounded-full blur-3xl"></div>
       
       <!-- Admin Edit Button -->
       <button 
         v-if="state.currentUser?.role === 'admin'"
         @click="openEditBannerModal"
-        class="absolute top-6 right-6 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 backdrop-blur-md transition-all cursor-pointer shadow-lg hover:scale-105 z-10"
+        class="absolute top-4 right-4 md:top-6 md:right-6 px-3 py-1.5 md:px-4 md:py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 backdrop-blur-md transition-all cursor-pointer shadow-lg hover:scale-105 z-10"
       >
         <span>⚙️ Edit Banner</span>
       </button>
 
-      <div class="max-w-2xl relative space-y-4">
+      <div class="max-w-2xl relative space-y-3">
         <span class="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-semibold uppercase tracking-wider">
           {{ bannerData.tag }}
         </span>
-        <h1 class="text-3xl md:text-5xl font-black text-white leading-tight tracking-tight">
+        <h1 class="text-2xl md:text-5xl font-black text-white leading-tight tracking-tight">
           {{ bannerData.title_normal }} <span class="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400">{{ bannerData.title_highlight }}</span>
         </h1>
-        <p class="text-sm md:text-base text-gray-400 leading-relaxed">
+        <p class="text-xs md:text-base text-gray-400 leading-relaxed">
           {{ bannerData.description }}
         </p>
       </div>
     </div>
 
     <!-- Tabs Nav -->
-    <div class="flex border-b border-gray-800/80 gap-6">
+    <div class="flex border-b border-gray-800/80 gap-4 md:gap-6 overflow-x-auto scrollbar-none">
       <button 
         @click="activeViewTab = 'browse'"
-        class="pb-4 font-bold text-sm tracking-wide uppercase transition-all relative cursor-pointer outline-none"
+        class="pb-3 md:pb-4 font-bold text-xs md:text-sm tracking-wide uppercase transition-all relative cursor-pointer outline-none flex-shrink-0"
         :class="activeViewTab === 'browse' ? 'text-orange-500' : 'text-gray-500 hover:text-gray-300'"
       >
         Browse Beats
@@ -40,7 +40,7 @@
       <button 
         v-if="state.currentUser"
         @click="activeViewTab = 'playlists'"
-        class="pb-4 font-bold text-sm tracking-wide uppercase transition-all relative cursor-pointer outline-none flex items-center gap-2"
+        class="pb-3 md:pb-4 font-bold text-xs md:text-sm tracking-wide uppercase transition-all relative cursor-pointer outline-none flex items-center gap-1.5 flex-shrink-0"
         :class="activeViewTab === 'playlists' ? 'text-orange-500' : 'text-gray-500 hover:text-gray-300'"
       >
         <span>📂 My Playlists</span>
@@ -52,14 +52,14 @@
     <!-- VIEW 1: BROWSE BEATS -->
     <div v-if="activeViewTab === 'browse'" class="space-y-10">
       <!-- Filters & Search Bar -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <!-- Genre Chips -->
-        <div class="flex flex-wrap gap-2.5">
+      <div class="flex flex-col gap-4">
+        <!-- Genre Chips - horizontal scroll on mobile -->
+        <div class="flex gap-2 overflow-x-auto scrollbar-none pb-1">
           <button 
             v-for="g in genresList" 
             :key="g"
             @click="selectedGenre = g"
-            class="h-10 px-5 rounded-full text-xs font-bold uppercase tracking-wider border select-none transition-all flex items-center gap-1.5"
+            class="h-9 md:h-10 px-4 md:px-5 rounded-full text-xs font-bold uppercase tracking-wider border select-none transition-all flex items-center gap-1.5 flex-shrink-0"
             :class="selectedGenre === g 
               ? 'bg-orange-600 border-orange-500 text-white font-extrabold shadow-lg shadow-orange-950/40' 
               : 'bg-gray-900/60 border-gray-800 text-gray-400 hover:border-gray-700 hover:text-white'"
@@ -69,15 +69,15 @@
         </div>
 
         <!-- Search Input Box -->
-        <div class="relative w-full md:w-80">
+        <div class="relative w-full md:w-80 md:self-end">
           <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </span>
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Search track title or producer..." 
-            class="w-full h-11 pl-12 pr-4 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-xs text-white placeholder-gray-500 transition-all font-semibold"
+            class="w-full h-10 md:h-11 pl-11 pr-4 rounded-xl bg-gray-900/60 border border-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-xs text-white placeholder-gray-500 transition-all font-semibold"
           />
         </div>
       </div>
@@ -227,11 +227,11 @@
     </div>
 
     <!-- VIEW 2: MY PLAYLISTS -->
-    <div v-if="activeViewTab === 'playlists'" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div v-if="activeViewTab === 'playlists'" class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
       <!-- Left side: Playlist Management -->
-      <div class="lg:col-span-1 space-y-6">
+      <div class="lg:col-span-1 space-y-5">
         <!-- New Playlist Creator Card -->
-        <div class="bg-gradient-to-b from-[#111827]/60 to-[#0f172a]/90 border border-gray-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="bg-gradient-to-b from-[#111827]/60 to-[#0f172a]/90 border border-gray-800 rounded-2xl p-5 shadow-xl space-y-4">
           <h4 class="font-extrabold text-white text-base tracking-tight">Create Playlist</h4>
           <form @submit.prevent="createPlaylist" class="flex gap-2">
             <input 
@@ -239,7 +239,7 @@
               type="text" 
               placeholder="e.g. Midnight Lo-Fi Beats" 
               required
-              class="flex-grow h-10 px-4 rounded-xl bg-gray-950 border border-gray-800 focus:border-orange-500 outline-none text-xs text-white placeholder-gray-500 transition-all font-semibold"
+              class="flex-grow h-10 px-3 rounded-xl bg-gray-950 border border-gray-800 focus:border-orange-500 outline-none text-xs text-white placeholder-gray-500 transition-all font-semibold"
             />
             <button 
               type="submit"
@@ -273,18 +273,15 @@
             :class="selectedPlaylist?.id === pl.id ? 'border-orange-500/50 bg-orange-500/5' : 'border-gray-850 bg-gray-900/10'"
           >
             <div class="flex items-center gap-3 truncate">
-              <div class="w-10 h-10 rounded-xl bg-orange-600/10 border border-orange-500/20 flex items-center justify-center text-orange-400 text-sm flex-shrink-0">
-                📂
-              </div>
+              <div class="w-10 h-10 rounded-xl bg-orange-600/10 border border-orange-500/20 flex items-center justify-center text-orange-400 text-sm flex-shrink-0">📂</div>
               <div class="truncate">
                 <h5 class="font-extrabold text-white text-sm group-hover:text-orange-400 transition-colors truncate">{{ pl.name }}</h5>
                 <p class="text-[10px] text-gray-500 font-semibold uppercase mt-0.5">{{ pl.songs ? pl.songs.length : 0 }} Tracks</p>
               </div>
             </div>
-            
             <button 
               @click.stop="deletePlaylist(pl.id)"
-              class="w-8 h-8 rounded-lg bg-gray-950 border border-gray-900 hover:border-red-500/40 hover:bg-red-500/10 text-gray-600 hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer"
+              class="w-8 h-8 rounded-lg bg-gray-950 border border-gray-900 hover:border-red-500/40 hover:bg-red-500/10 text-gray-600 hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer flex-shrink-0"
               title="Delete Playlist"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -295,40 +292,37 @@
 
       <!-- Right side: Detailed Tracks of Selected Playlist -->
       <div class="lg:col-span-2">
-        <div v-if="!selectedPlaylist" class="h-full border border-gray-800 border-dashed rounded-3xl p-16 flex flex-col items-center justify-center text-center text-gray-500 min-h-[300px]">
+        <div v-if="!selectedPlaylist" class="h-full border border-gray-800 border-dashed rounded-3xl p-10 md:p-16 flex flex-col items-center justify-center text-center text-gray-500 min-h-[200px] md:min-h-[300px]">
           <svg class="w-12 h-12 text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
           <h4 class="font-extrabold text-gray-400 text-sm">Select a Collection</h4>
-          <p class="text-xs text-gray-600 mt-1 max-w-xs mx-auto">Click any playlist on the left to view tracks, remove items, or play the entire playlist queue.</p>
+          <p class="text-xs text-gray-600 mt-1 max-w-xs mx-auto">Click any playlist on the left to view tracks.</p>
         </div>
 
-        <div v-else class="bg-[#0e1322]/40 border border-gray-800/80 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-6">
+        <div v-else class="bg-[#0e1322]/40 border border-gray-800/80 rounded-3xl overflow-hidden shadow-2xl p-4 md:p-6 space-y-5">
           <!-- Playlist Info Header -->
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-800 pb-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-800 pb-4 md:pb-6">
             <div>
-              <span class="text-[10px] font-bold tracking-wider bg-orange-600/10 border border-orange-500/20 text-orange-400 uppercase px-2 py-0.5 rounded">
-                Playlist Catalog
-              </span>
-              <h3 class="text-2xl font-black text-white mt-2">{{ selectedPlaylist.name }}</h3>
-              <p class="text-xs text-gray-500 font-semibold mt-1">ORGANIZED FOR SINK WITH BOTTOM PLAYER</p>
+              <span class="text-[10px] font-bold tracking-wider bg-orange-600/10 border border-orange-500/20 text-orange-400 uppercase px-2 py-0.5 rounded">Playlist Catalog</span>
+              <h3 class="text-xl md:text-2xl font-black text-white mt-2">{{ selectedPlaylist.name }}</h3>
             </div>
-            
             <button 
               v-if="selectedPlaylist.songs && selectedPlaylist.songs.length > 0"
               @click="playPlaylist(selectedPlaylist)"
-              class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:opacity-95 text-white font-bold text-sm px-6 h-11 rounded-xl shadow-lg shadow-orange-950/40 cursor-pointer"
+              class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:opacity-95 text-white font-bold text-sm px-5 h-10 rounded-xl shadow-lg shadow-orange-950/40 cursor-pointer w-full md:w-auto"
             >
               <span>▶ Play Playlist Queue</span>
             </button>
           </div>
 
-          <!-- Songs List Table -->
-          <div v-if="!selectedPlaylist.songs || selectedPlaylist.songs.length === 0" class="py-16 text-center text-gray-500">
+          <!-- Songs - Mobile Card List -->
+          <div v-if="!selectedPlaylist.songs || selectedPlaylist.songs.length === 0" class="py-12 text-center text-gray-500">
             <svg class="w-10 h-10 text-gray-700 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             <p class="font-bold text-gray-400 text-xs">Playlist is empty</p>
             <p class="text-[10px] text-gray-600 mt-0.5">Browse beats and click the "+" button to add tracks!</p>
           </div>
 
-          <div v-else class="overflow-x-auto">
+          <!-- Desktop table -->
+          <div v-else class="hidden md:block overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="border-b border-gray-800/80 text-gray-500 text-xs font-bold uppercase tracking-wider bg-gray-950/10">
@@ -350,28 +344,14 @@
                   </td>
                   <td class="px-4 py-3 text-xs text-gray-400 uppercase font-semibold">{{ s.genre }}</td>
                   <td class="px-4 py-3 text-xs">
-                    <span 
-                      @click="navigateTo('Profile', { uid: s.producer_uid })" 
-                      class="text-gray-400 hover:text-orange-400 cursor-pointer transition-colors font-medium"
-                    >
-                      {{ s.producer_name }}
-                    </span>
+                    <span @click="navigateTo('Profile', { uid: s.producer_uid })" class="text-gray-400 hover:text-orange-400 cursor-pointer transition-colors font-medium">{{ s.producer_name }}</span>
                   </td>
                   <td class="px-4 py-3 text-right">
                     <div class="inline-flex gap-2">
-                      <button 
-                        @click="playPlaylistSong(s, selectedPlaylist)"
-                        class="w-7 h-7 rounded-lg bg-orange-600/10 hover:bg-orange-600 border border-orange-500/20 hover:border-orange-500 text-orange-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                        title="Play Track"
-                      >
+                      <button @click="playPlaylistSong(s, selectedPlaylist)" class="w-7 h-7 rounded-lg bg-orange-600/10 hover:bg-orange-600 border border-orange-500/20 hover:border-orange-500 text-orange-400 hover:text-white flex items-center justify-center transition-all cursor-pointer" title="Play Track">
                         <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                       </button>
-                      
-                      <button 
-                        @click="removeFromPlaylist(selectedPlaylist, s.id)"
-                        class="w-7 h-7 rounded-lg bg-gray-950 border border-gray-900 hover:border-red-500/40 hover:bg-red-500/10 text-gray-600 hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer"
-                        title="Remove from Playlist"
-                      >
+                      <button @click="removeFromPlaylist(selectedPlaylist, s.id)" class="w-7 h-7 rounded-lg bg-gray-950 border border-gray-900 hover:border-red-500/40 hover:bg-red-500/10 text-gray-600 hover:text-red-400 flex items-center justify-center transition-colors cursor-pointer" title="Remove from Playlist">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7"/></svg>
                       </button>
                     </div>
@@ -379,6 +359,30 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Mobile card list -->
+          <div v-if="selectedPlaylist.songs && selectedPlaylist.songs.length > 0" class="md:hidden space-y-2">
+            <div 
+              v-for="s in selectedPlaylist.songs" 
+              :key="s.id"
+              class="flex items-center gap-3 p-3 rounded-xl bg-gray-900/30 border border-gray-800/60"
+            >
+              <img @click="playPlaylistSong(s, selectedPlaylist)" :src="s.thumbnail_url" class="w-11 h-11 rounded-lg object-cover border border-gray-800 cursor-pointer flex-shrink-0" alt="cover" />
+              <div class="flex-1 min-w-0">
+                <h5 class="font-bold text-white text-xs truncate">{{ s.title }}</h5>
+                <p class="text-[10px] text-orange-400 font-medium truncate">{{ s.producer_name }}</p>
+                <span class="text-[9px] text-gray-500 uppercase font-semibold">{{ s.genre }}</span>
+              </div>
+              <div class="flex gap-1.5 flex-shrink-0">
+                <button @click="playPlaylistSong(s, selectedPlaylist)" class="w-8 h-8 rounded-lg bg-orange-600/10 border border-orange-500/20 text-orange-400 flex items-center justify-center cursor-pointer">
+                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <button @click="removeFromPlaylist(selectedPlaylist, s.id)" class="w-8 h-8 rounded-lg bg-gray-950 border border-gray-900 text-gray-500 hover:text-red-400 flex items-center justify-center cursor-pointer">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7"/></svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

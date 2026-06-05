@@ -1,46 +1,39 @@
 <template>
-  <div class="min-h-screen bg-[#0b0f19] text-gray-100 flex flex-col justify-between selection:bg-orange-600 selection:text-white pb-28">
+  <div class="min-h-screen bg-[#0b0f19] text-gray-100 flex flex-col justify-between selection:bg-orange-600 selection:text-white pb-32 md:pb-28">
     <!-- Header -->
-    <header class="border-b border-gray-800 bg-[#0e1322]/80 backdrop-blur-md sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
+    <header class="border-b border-gray-800 bg-[#0e1322]/95 backdrop-blur-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-3">
         <!-- Logo -->
-        <div class="flex items-center gap-3 cursor-pointer flex-shrink-0" @click="navigateTo('Home')">
-          <img src="/BeatGround.png" class="w-10 h-10 rounded-xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
-          <span class="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
+        <div class="flex items-center gap-2 md:gap-3 cursor-pointer flex-shrink-0" @click="navigateTo('Home')">
+          <img src="/BeatGround.png" class="w-8 h-8 md:w-10 md:h-10 rounded-xl object-cover shadow-lg shadow-orange-950/30" alt="BeatGround Logo" />
+          <span class="text-lg md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400 tracking-tight">Beat<span class="text-orange-500">Ground</span></span>
         </div>
         
-        <!-- Navigation Links -->
-        <nav class="flex items-center gap-4 md:gap-8 text-xs md:text-sm font-semibold text-gray-400">
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-400">
           <button @click="navigateTo('Home')" class="hover:text-orange-400 transition-colors cursor-pointer outline-none" :class="{ 'text-white': state.currentRoute === 'Home' }">Browse</button>
-          
-          <!-- Producer Dashboard Link -->
           <button 
             v-if="userRole === 'producer' || userRole === 'admin'"
             @click="navigateTo('ProducerDashboard')" 
             class="hover:text-orange-400 transition-colors cursor-pointer outline-none" 
             :class="{ 'text-white': state.currentRoute.startsWith('Producer') }"
-          >
-            Producer Panel
-          </button>
-
-          <!-- Admin Dashboard Link -->
+          >Producer Panel</button>
           <button 
             v-if="userRole === 'admin'"
             @click="navigateTo('AdminDashboard')" 
             class="hover:text-orange-400 transition-colors cursor-pointer outline-none" 
             :class="{ 'text-white': state.currentRoute.startsWith('Admin') }"
-          >
-            Admin Panel
-          </button>
+          >Admin Panel</button>
         </nav>
 
-        <!-- User Options -->
-        <div class="flex items-center gap-4 flex-shrink-0">
+        <!-- Right Side -->
+        <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
+          <!-- Desktop: User info + Sign Out -->
           <div 
             @click="navigateTo('Profile', { uid: state.currentUser?.uid })" 
-            class="flex items-center gap-3 text-right cursor-pointer hover:opacity-85 transition-opacity"
+            class="hidden md:flex items-center gap-3 text-right cursor-pointer hover:opacity-85 transition-opacity"
           >
-            <div class="hidden sm:block">
+            <div>
               <div class="text-sm font-bold text-white leading-none hover:text-orange-400 transition-colors">{{ userName }}</div>
               <div class="flex items-center justify-end gap-1.5 mt-1">
                 <span class="text-[9px] text-orange-400 font-bold uppercase tracking-wider bg-orange-600/10 px-1.5 py-0.5 rounded border border-orange-500/10">{{ userRole }}</span>
@@ -50,13 +43,73 @@
               {{ userName ? userName[0] : 'U' }}
             </div>
           </div>
-          <button @click="logout" class="text-xs font-semibold text-gray-400 hover:text-red-400 transition-colors cursor-pointer">Sign Out</button>
+          <button @click="logout" class="hidden md:block text-xs font-semibold text-gray-400 hover:text-red-400 transition-colors cursor-pointer">Sign Out</button>
+
+          <!-- Mobile: Avatar only (clickable to profile) -->
+          <div 
+            @click="navigateTo('Profile', { uid: state.currentUser?.uid })" 
+            class="md:hidden w-9 h-9 rounded-xl bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white text-sm shadow-md select-none cursor-pointer"
+          >
+            {{ userName ? userName[0] : 'U' }}
+          </div>
+
+          <!-- Hamburger Button (mobile only) -->
+          <button 
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="md:hidden w-9 h-9 rounded-xl bg-gray-900 border border-gray-800 flex flex-col items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span class="w-4 h-0.5 bg-white rounded-full transition-all" :class="mobileMenuOpen ? 'rotate-45 translate-y-2' : ''"></span>
+            <span class="w-4 h-0.5 bg-white rounded-full transition-all" :class="mobileMenuOpen ? 'opacity-0' : ''"></span>
+            <span class="w-4 h-0.5 bg-white rounded-full transition-all" :class="mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div 
+        v-if="mobileMenuOpen"
+        class="md:hidden border-t border-gray-800 bg-[#0a0e1a]/98 backdrop-blur-xl px-4 py-4 space-y-1"
+      >
+        <!-- User Info Row -->
+        <div class="flex items-center gap-3 px-3 py-3 mb-2 bg-gray-900/40 rounded-xl border border-gray-800">
+          <div class="w-10 h-10 rounded-xl bg-orange-600/20 border border-orange-500/30 flex items-center justify-center font-bold text-white text-sm flex-shrink-0">
+            {{ userName ? userName[0] : 'U' }}
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white">{{ userName }}</div>
+            <span class="text-[9px] text-orange-400 font-bold uppercase tracking-wider bg-orange-600/10 px-1.5 py-0.5 rounded border border-orange-500/10">{{ userRole }}</span>
+          </div>
+        </div>
+        <!-- Nav Items -->
+        <button 
+          @click="navigateTo('Home'); mobileMenuOpen=false"
+          class="w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition-colors"
+          :class="state.currentRoute === 'Home' ? 'bg-orange-600/10 text-orange-400 border border-orange-500/20' : 'text-gray-300 hover:text-white hover:bg-gray-900/60'"
+        >🎵 Browse Beats</button>
+        <button 
+          v-if="userRole === 'producer' || userRole === 'admin'"
+          @click="navigateTo('ProducerDashboard'); mobileMenuOpen=false"
+          class="w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition-colors"
+          :class="state.currentRoute.startsWith('Producer') ? 'bg-orange-600/10 text-orange-400 border border-orange-500/20' : 'text-gray-300 hover:text-white hover:bg-gray-900/60'"
+        >🎛️ Producer Panel</button>
+        <button 
+          v-if="userRole === 'admin'"
+          @click="navigateTo('AdminDashboard'); mobileMenuOpen=false"
+          class="w-full text-left px-4 py-3 rounded-xl font-semibold text-sm transition-colors"
+          :class="state.currentRoute.startsWith('Admin') ? 'bg-orange-600/10 text-orange-400 border border-orange-500/20' : 'text-gray-300 hover:text-white hover:bg-gray-900/60'"
+        >🛡️ Admin Panel</button>
+        <button 
+          @click="navigateTo('Profile', { uid: state.currentUser?.uid }); mobileMenuOpen=false"
+          class="w-full text-left px-4 py-3 rounded-xl font-semibold text-sm text-gray-300 hover:text-white hover:bg-gray-900/60 transition-colors"
+        >👤 My Profile</button>
+        <div class="border-t border-gray-800 pt-2 mt-2">
+          <button @click="logout" class="w-full text-left px-4 py-3 rounded-xl font-semibold text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors">🚪 Sign Out</button>
         </div>
       </div>
     </header>
 
     <!-- Main Content Slot -->
-    <main class="max-w-7xl mx-auto px-6 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-3 md:px-6 py-5 md:py-8 flex-grow w-full">
       <slot />
     </main>
 
@@ -91,25 +144,30 @@
     <!-- Persistent Bottom Audio Player Bar -->
     <div 
       v-if="player.currentTrack" 
-      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-3 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:grid md:grid-cols-3 items-center px-4 md:px-6 shadow-2xl transition-all duration-300 gap-3 md:gap-0"
+      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-2 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:grid md:grid-cols-3 items-center px-3 md:px-6 shadow-2xl transition-all duration-300 gap-2 md:gap-0"
     >
       <!-- Top Row on Mobile, Left Column on Desktop -->
       <div class="flex items-center justify-between w-full md:w-full md:justify-start md:justify-self-start">
         <!-- Track Details Left -->
-        <div class="flex items-center gap-3 md:gap-4 md:min-w-[200px]">
-          <img :src="player.currentTrack.thumbnail_url" class="w-10 h-10 md:w-14 md:h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0 animate-fade-in" alt="Cover" />
-          <div class="truncate max-w-[150px] sm:max-w-xs md:max-w-full">
+        <div class="flex items-center gap-2 md:gap-4 md:min-w-[200px] min-w-0 flex-1">
+          <img :src="player.currentTrack.thumbnail_url" class="w-9 h-9 md:w-14 md:h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0" alt="Cover" />
+          <div class="truncate min-w-0">
             <h4 class="font-bold text-white text-xs md:text-sm truncate">{{ player.currentTrack.title }}</h4>
             <p class="text-[10px] md:text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
           </div>
         </div>
 
-        <!-- Mobile-Only Controls (Play/Pause & Lyrics) -->
-        <div class="flex md:hidden items-center gap-3">
-          <button @click="toggleLyricsPane" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer border text-xs" :class="showLyricsPane ? 'border-orange-500 text-orange-500 bg-orange-600/10' : 'border-gray-800 text-gray-400'">🎤</button>
-          <button @click="player.togglePlay" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-black shadow-lg">
+        <!-- Mobile-Only Controls (Prev, Play/Pause, Next) -->
+        <div class="flex md:hidden items-center gap-2 flex-shrink-0">
+          <button @click="player.prev" class="w-7 h-7 flex items-center justify-center text-gray-400">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
+          </button>
+          <button @click="player.togglePlay" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-black shadow-lg flex-shrink-0">
             <svg v-if="!player.isPlaying" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button @click="player.next" class="w-7 h-7 flex items-center justify-center text-gray-400">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zm-10.5 12V6l8.5 6z"/></svg>
           </button>
         </div>
       </div>
@@ -241,6 +299,7 @@ export default {
 
     const player = computed(() => playerStore);
     const showLyricsPane = ref(false);
+    const mobileMenuOpen = ref(false);
 
     // Initialize player store on mounting
     onMounted(() => {
@@ -286,6 +345,7 @@ export default {
       userRole,
       player,
       showLyricsPane,
+      mobileMenuOpen,
       formatTime,
       onSeek,
       onVolumeChange,
