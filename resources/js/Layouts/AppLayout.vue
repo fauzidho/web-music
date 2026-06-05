@@ -91,10 +91,10 @@
     <!-- Persistent Bottom Audio Player Bar -->
     <div 
       v-if="player.currentTrack" 
-      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-3 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:flex-row items-center justify-between px-4 md:px-6 shadow-2xl transition-all duration-300 gap-3 md:gap-0"
+      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-3 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:grid md:grid-cols-3 items-center px-4 md:px-6 shadow-2xl transition-all duration-300 gap-3 md:gap-0"
     >
       <!-- Top Row on Mobile, Left Column on Desktop -->
-      <div class="flex items-center justify-between w-full md:w-auto md:justify-start">
+      <div class="flex items-center justify-between w-full md:w-full md:justify-start md:justify-self-start">
         <!-- Track Details Left -->
         <div class="flex items-center gap-3 md:gap-4 md:min-w-[200px]">
           <img :src="player.currentTrack.thumbnail_url" class="w-10 h-10 md:w-14 md:h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0 animate-fade-in" alt="Cover" />
@@ -115,7 +115,7 @@
       </div>
 
       <!-- Player Controls & Timeline Center -->
-      <div class="flex flex-col items-center gap-1.5 md:gap-2 w-full md:flex-grow md:max-w-2xl md:px-6">
+      <div class="flex flex-col items-center gap-1.5 md:gap-2 w-full md:max-w-2xl md:px-6 md:justify-self-center">
         <!-- Buttons (Hidden on mobile, uses mobile controls above) -->
         <div class="hidden md:flex items-center gap-5">
           <button @click="player.prev" class="text-gray-400 hover:text-white transition-colors cursor-pointer" title="Previous Track">
@@ -156,7 +156,7 @@
       </div>
 
       <!-- Volume & Options Right (Hidden on mobile) -->
-      <div class="hidden md:flex items-center justify-end gap-4 w-1/4 min-w-[180px] text-gray-400">
+      <div class="hidden md:flex items-center justify-end gap-4 w-full text-gray-400 md:justify-self-end">
         <!-- Volume Icon -->
         <button @click="toggleMute" class="hover:text-white transition-colors cursor-pointer">
           <svg v-if="player.volume === 0" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zM4.5 9H9l5-5v16l-5-5H4.5V9z"/></svg>
