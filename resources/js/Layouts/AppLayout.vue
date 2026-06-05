@@ -36,9 +36,12 @@
 
         <!-- User Options -->
         <div class="flex items-center gap-4 flex-shrink-0">
-          <div class="flex items-center gap-3 text-right">
+          <div 
+            @click="navigateTo('Profile', { uid: state.currentUser?.uid })" 
+            class="flex items-center gap-3 text-right cursor-pointer hover:opacity-85 transition-opacity"
+          >
             <div class="hidden sm:block">
-              <div class="text-sm font-bold text-white leading-none">{{ userName }}</div>
+              <div class="text-sm font-bold text-white leading-none hover:text-orange-400 transition-colors">{{ userName }}</div>
               <div class="flex items-center justify-end gap-1.5 mt-1">
                 <span class="text-[9px] text-orange-400 font-bold uppercase tracking-wider bg-orange-600/10 px-1.5 py-0.5 rounded border border-orange-500/10">{{ userRole }}</span>
               </div>

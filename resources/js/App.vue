@@ -11,13 +11,13 @@
   <div v-else class="min-h-screen bg-[#0b0f19] text-gray-100">
     <!-- Standalone full-screen auth routes -->
     <template v-if="isAuthRoute">
-      <component :is="activeComponent" />
+      <component :is="activeComponent" :params="state.routeParams" />
     </template>
 
     <!-- Wrapped authenticated routes (Includes Sidebar Header & Persistent Bottom Music Player) -->
     <template v-else>
       <AppLayout>
-        <component :is="activeComponent" />
+        <component :is="activeComponent" :params="state.routeParams" />
       </AppLayout>
     </template>
   </div>
@@ -35,6 +35,7 @@ import Register from './Pages/Auth/Register.vue';
 import ProducerDashboard from './Pages/Producer/Dashboard.vue';
 import ProducerUpload from './Pages/Producer/Upload.vue';
 import AdminDashboard from './Pages/Admin/Dashboard.vue';
+import Profile from './Pages/Profile.vue';
 
 export default {
   name: 'App',
@@ -49,7 +50,8 @@ export default {
       Register,
       ProducerDashboard,
       ProducerUpload,
-      AdminDashboard
+      AdminDashboard,
+      Profile
     };
 
     // Initialize Auth Listener on Mount

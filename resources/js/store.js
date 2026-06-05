@@ -7,14 +7,16 @@ import { doc, getDoc } from 'firebase/firestore';
 export const state = reactive({
     currentUser: null,
     currentRoute: 'Home',
+    routeParams: {},
     loadingAuth: true,
     isRegistering: false
 });
 
 // Helper checking function for route transition guard
-export function navigateTo(route) {
+export function navigateTo(route, params = {}) {
     if (state.loadingAuth) {
         state.currentRoute = route;
+        state.routeParams = params;
         return;
     }
 
@@ -45,6 +47,7 @@ export function navigateTo(route) {
     }
 
     state.currentRoute = route;
+    state.routeParams = params;
     
     // Auto-scroll to top on view transition
     window.scrollTo({ top: 0, behavior: 'smooth' });

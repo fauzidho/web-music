@@ -159,7 +159,12 @@
                   {{ song.genre }}
                 </span>
               </div>
-              <p class="text-xs text-gray-400 font-medium truncate">{{ song.producer_name }}</p>
+              <p 
+                @click.stop="navigateTo('Profile', { uid: song.producer_uid })" 
+                class="text-xs text-gray-400 hover:text-orange-400 font-medium truncate cursor-pointer transition-colors inline-block"
+              >
+                {{ song.producer_name }}
+              </p>
             </div>
 
             <!-- Play statistics & Interaction -->
@@ -344,7 +349,14 @@
                     <span class="truncate max-w-[150px]">{{ s.title }}</span>
                   </td>
                   <td class="px-4 py-3 text-xs text-gray-400 uppercase font-semibold">{{ s.genre }}</td>
-                  <td class="px-4 py-3 text-xs text-gray-400">{{ s.producer_name }}</td>
+                  <td class="px-4 py-3 text-xs">
+                    <span 
+                      @click="navigateTo('Profile', { uid: s.producer_uid })" 
+                      class="text-gray-400 hover:text-orange-400 cursor-pointer transition-colors font-medium"
+                    >
+                      {{ s.producer_name }}
+                    </span>
+                  </td>
                   <td class="px-4 py-3 text-right">
                     <div class="inline-flex gap-2">
                       <button 
@@ -969,6 +981,7 @@ export default {
       state,
       activeViewTab,
       searchQuery,
+      navigateTo,
       selectedGenre,
       genresList,
       filteredSongs,
