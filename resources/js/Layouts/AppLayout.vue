@@ -144,52 +144,66 @@
     <!-- Persistent Bottom Audio Player Bar -->
     <div 
       v-if="player.currentTrack" 
-      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-2 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:grid md:grid-cols-3 items-center px-3 md:px-6 shadow-2xl transition-all duration-300 gap-2 md:gap-0"
+      class="fixed bottom-0 left-0 right-0 h-auto md:h-24 py-2 md:py-0 bg-[#0d1222]/98 border-t border-gray-800 backdrop-blur-xl z-50 flex flex-col md:grid md:grid-cols-3 items-center px-3 md:px-6 shadow-2xl transition-all duration-300 gap-1.5 md:gap-0"
     >
-      <!-- Top Row on Mobile, Left Column on Desktop -->
-      <div class="flex items-center justify-between w-full md:w-full md:justify-start md:justify-self-start">
-        <!-- Track Details Left -->
-        <div class="flex items-center gap-2 md:gap-4 md:min-w-[200px] min-w-0 flex-1">
-          <img :src="player.currentTrack.thumbnail_url" class="w-9 h-9 md:w-14 md:h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0" alt="Cover" />
+      <!-- Row 1 (Mobile): Track info | Desktop: Left column -->
+      <div class="flex items-center w-full md:justify-start md:justify-self-start">
+        <div class="flex items-center gap-2 md:gap-4 md:min-w-[200px] min-w-0 w-full">
+          <img :src="player.currentTrack.thumbnail_url" class="w-8 h-8 md:w-14 md:h-14 rounded-lg object-cover border border-gray-800 shadow-md flex-shrink-0" alt="Cover" />
           <div class="truncate min-w-0">
             <h4 class="font-bold text-white text-xs md:text-sm truncate">{{ player.currentTrack.title }}</h4>
             <p class="text-[10px] md:text-xs text-orange-400 font-medium truncate mt-0.5">{{ player.currentTrack.producer_name }}</p>
           </div>
         </div>
+      </div>
 
-        <!-- Mobile-Only Controls (Prev, Play/Pause, Next) -->
-        <div class="flex md:hidden items-center gap-2 flex-shrink-0">
-          <button @click="player.prev" class="w-7 h-7 flex items-center justify-center text-gray-400">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
-          </button>
-          <button @click="player.togglePlay" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-black shadow-lg flex-shrink-0">
+      <!-- Row 2 (Mobile only): Full Controls — Loop | Prev | PLAY(center) | Next | Lyrics -->
+      <div class="flex md:hidden items-center justify-between w-full">
+        <!-- Loop -->
+        <button @click="player.toggleLoop" 
+          class="w-9 h-9 flex items-center justify-center rounded-lg transition-colors cursor-pointer flex-1"
+          :class="player.loopMode === 'off' ? 'text-gray-500' : 'text-orange-500'"
+        >
+          <svg v-if="player.loopMode !== 'one'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+          <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>
+        </button>
+        <!-- Prev -->
+        <button @click="player.prev" class="w-9 h-9 flex items-center justify-center text-gray-400 cursor-pointer flex-1">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
+        </button>
+        <!-- Play/Pause — CENTER, always stays in the middle -->
+        <div class="flex-1 flex justify-center">
+          <button @click="player.togglePlay" class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-black shadow-lg cursor-pointer">
             <svg v-if="!player.isPlaying" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </button>
-          <button @click="player.next" class="w-7 h-7 flex items-center justify-center text-gray-400">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zm-10.5 12V6l8.5 6z"/></svg>
-          </button>
         </div>
+        <!-- Next -->
+        <button @click="player.next" class="w-9 h-9 flex items-center justify-center text-gray-400 cursor-pointer flex-1">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zm-10.5 12V6l8.5 6z"/></svg>
+        </button>
+        <!-- Lyrics -->
+        <button @click="toggleLyricsPane"
+          class="w-9 h-9 rounded-lg flex items-center justify-center transition-all cursor-pointer border text-xs flex-1"
+          :class="showLyricsPane ? 'border-orange-500 text-orange-500 bg-orange-600/10' : 'border-gray-800 text-gray-400'"
+        >🎤</button>
       </div>
 
-      <!-- Player Controls & Timeline Center -->
+      <!-- Desktop: Center column — Playback controls + timeline -->
       <div class="flex flex-col items-center gap-1.5 md:gap-2 w-full md:max-w-2xl md:px-6 md:justify-self-center">
-        <!-- Buttons (Hidden on mobile, uses mobile controls above) -->
+        <!-- Desktop buttons only -->
         <div class="hidden md:flex items-center gap-5">
           <button @click="player.prev" class="text-gray-400 hover:text-white transition-colors cursor-pointer" title="Previous Track">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 6v12z"/></svg>
           </button>
-          
           <button @click="player.togglePlay" class="w-10 h-10 rounded-full bg-white hover:scale-105 transition-transform flex items-center justify-center text-black shadow-lg shadow-white/10 cursor-pointer">
             <svg v-if="!player.isPlaying" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           </button>
-
           <button @click="player.next" class="text-gray-400 hover:text-white transition-colors cursor-pointer" title="Next Track">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zm-10.5 12V6l8.5 6z"/></svg>
           </button>
-
-          <button @click="player.toggleLoop" class="transition-colors cursor-pointer" :class="player.loopMode === 'off' ? 'text-gray-500 hover:text-white' : 'text-orange-500 hover:text-orange-400'" :title="player.loopMode === 'off' ? 'Loop Off' : player.loopMode === 'all' ? 'Loop All' : 'Loop One'">
+          <button @click="player.toggleLoop" class="transition-colors cursor-pointer" :class="player.loopMode === 'off' ? 'text-gray-500 hover:text-white' : 'text-orange-500 hover:text-orange-400'">
             <svg v-if="player.loopMode !== 'one'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
             <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>
           </button>
