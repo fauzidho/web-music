@@ -47,9 +47,10 @@ export const playerStore = reactive({
       // Auto-advance to next song in the queue on completion
       this.audio.addEventListener('ended', () => {
         if (this.loopMode === 'one') {
+          // Native loop attribute is used, but keep this as a robust fallback
           this.currentTime = 0;
           this.audio.currentTime = 0;
-          this.audio.play();
+          this.audio.play().catch(err => console.error("Playback restart failed:", err));
         } else {
           this.next();
         }
@@ -68,7 +69,7 @@ export const playerStore = reactive({
     }
   },
 
-  play(track, trackQueue = []) {
+  play(track, trackQueue = [], forcePlay = false) {
     this.init();
     if (!track) return;
 
@@ -81,8 +82,8 @@ export const playerStore = reactive({
       this.currentIndex = 0;
     }
 
-    // Toggle play/pause if same track is clicked
-    if (this.currentTrack?.id === track.id) {
+    // Toggle play/pause if same track is clicked and not forcePlay
+    if (this.currentTrack?.id === track.id && !forcePlay) {
       this.togglePlay();
       return;
     }
@@ -94,6 +95,8 @@ export const playerStore = reactive({
       this.currentTime = 0;
       this.duration = 0;
       this.audio.src = track.audio_url;
+      // Sync native browser looping state
+      this.audio.loop = (this.loopMode === 'one');
       this.audio.play();
       this.isPlaying = true;
     } catch (err) {
@@ -122,6 +125,10 @@ export const playerStore = reactive({
     } else {
       this.loopMode = 'off';
     }
+    // Update native HTML5 loop attribute state dynamically
+    if (this.audio) {
+      this.audio.loop = (this.loopMode === 'one');
+    }
   },
 
   seek(secs) {
@@ -147,12 +154,12 @@ export const playerStore = reactive({
     }
 
     const nextIndex = (this.currentIndex + 1) % this.queue.length;
-    this.play(this.queue[nextIndex], this.queue);
+    this.play(this.queue[nextIndex], this.queue, true);
   },
 
   prev() {
     if (this.queue.length === 0 || this.currentIndex === -1) return;
     const prevIndex = this.currentIndex === 0 ? this.queue.length - 1 : this.currentIndex - 1;
-    this.play(this.queue[prevIndex], this.queue);
+    this.play(this.queue[prevIndex], this.queue, true);
   }
 });
