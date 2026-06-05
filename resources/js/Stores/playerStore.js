@@ -11,6 +11,7 @@ export const playerStore = reactive({
   volume: 0.8,
   queue: [],
   currentIndex: -1,
+  loopMode: 'off', // 'off', 'all', 'one'
   // Track if play count was already incremented for the current track session
   _countedTrackId: null,
 
@@ -45,7 +46,13 @@ export const playerStore = reactive({
 
       // Auto-advance to next song in the queue on completion
       this.audio.addEventListener('ended', () => {
-        this.next();
+        if (this.loopMode === 'one') {
+          this.currentTime = 0;
+          this.audio.currentTime = 0;
+          this.audio.play();
+        } else {
+          this.next();
+        }
       });
     }
   },
@@ -107,6 +114,16 @@ export const playerStore = reactive({
     }
   },
 
+  toggleLoop() {
+    if (this.loopMode === 'off') {
+      this.loopMode = 'all';
+    } else if (this.loopMode === 'all') {
+      this.loopMode = 'one';
+    } else {
+      this.loopMode = 'off';
+    }
+  },
+
   seek(secs) {
     if (!this.audio) return;
     this.audio.currentTime = secs;
@@ -122,6 +139,13 @@ export const playerStore = reactive({
 
   next() {
     if (this.queue.length === 0 || this.currentIndex === -1) return;
+    
+    if (this.currentIndex === this.queue.length - 1 && this.loopMode !== 'all') {
+      this.isPlaying = false;
+      if (this.audio) this.audio.pause();
+      return;
+    }
+
     const nextIndex = (this.currentIndex + 1) % this.queue.length;
     this.play(this.queue[nextIndex], this.queue);
   },

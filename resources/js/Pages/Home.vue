@@ -127,7 +127,7 @@
             :class="{ 'border-orange-600 ring-1 ring-orange-600/30 bg-orange-950/5': isPlayingSong(song.id) , 'border-gray-800': !isPlayingSong(song.id) }"
           >
             <!-- Thumbnail Container -->
-            <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-950 border border-gray-800/80 mb-4 shadow-inner">
+            <div @click="playSong(song)" class="relative aspect-square w-full rounded-xl overflow-hidden bg-gray-950 border border-gray-800/80 mb-4 shadow-inner cursor-pointer">
               <img :src="song.thumbnail_url" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="Cover" />
               
               <!-- Hover Action Overlay -->
@@ -340,7 +340,7 @@
                   class="hover:bg-gray-850/10 transition-colors group"
                 >
                   <td class="px-4 py-3 font-bold text-white flex items-center gap-3">
-                    <img :src="s.thumbnail_url" class="w-9 h-9 rounded-lg object-cover border border-gray-800" alt="cover" />
+                    <img @click="playPlaylistSong(s, selectedPlaylist)" :src="s.thumbnail_url" class="w-9 h-9 rounded-lg object-cover border border-gray-800 cursor-pointer" alt="cover" />
                     <span class="truncate max-w-[150px]">{{ s.title }}</span>
                   </td>
                   <td class="px-4 py-3 text-xs text-gray-400 uppercase font-semibold">{{ s.genre }}</td>

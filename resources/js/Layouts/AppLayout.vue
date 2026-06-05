@@ -127,6 +127,11 @@
           <button @click="player.next" class="text-gray-400 hover:text-white transition-colors cursor-pointer" title="Next Track">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6h2v12h-2zm-10.5 12V6l8.5 6z"/></svg>
           </button>
+
+          <button @click="player.toggleLoop" class="transition-colors cursor-pointer" :class="player.loopMode === 'off' ? 'text-gray-500 hover:text-white' : 'text-orange-500 hover:text-orange-400'" :title="player.loopMode === 'off' ? 'Loop Off' : player.loopMode === 'all' ? 'Loop All' : 'Loop One'">
+            <svg v-if="player.loopMode !== 'one'" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+            <svg v-else class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4zm-4-2V9h-1l-2 1v1h1.5v4H13z"/></svg>
+          </button>
         </div>
 
         <!-- Timeline Slider -->
